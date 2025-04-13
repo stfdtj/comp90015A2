@@ -1,15 +1,10 @@
 package main;
 
-import Whiteboard.Canvas;
-import Whiteboard.WhiteboardFunctions;
 import Whiteboard.WhiteboardGUI;
 
 import javax.swing.*;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 
-public class Server extends Canvas {
+public class Server  {
 
     // true-server; false-client
     private static boolean identity;
@@ -30,17 +25,17 @@ public class Server extends Canvas {
     public static void main(String args[]) {
         try {
             // Instantiating the implementation class
-            Canvas canvas = new Canvas();
+            //DrawingMode dm = new DrawingMode();
 
             // Exporting the object of implementation class
             // (here we are exporting the remote object to the stub)
-            WhiteboardFunctions stub = (WhiteboardFunctions) UnicastRemoteObject.exportObject(canvas, 0);
+            //WhiteboardFunctions stub = (WhiteboardFunctions) UnicastRemoteObject.exportObject(dm, 0);
 
             // Binding the remote object (stub) in the registry
-            Registry registry = LocateRegistry.getRegistry();
+            //Registry registry = LocateRegistry.getRegistry();
 
-            registry.bind("Hello", stub);
-            System.err.println("Server ready");
+            //registry.bind("Hello", stub);
+            //System.err.println("Server ready");
         } catch (Exception e) {
             System.err.println("Server exception: " + e.toString());
             e.printStackTrace();

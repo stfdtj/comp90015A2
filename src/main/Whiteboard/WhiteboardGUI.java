@@ -2,6 +2,8 @@ package Whiteboard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 public class WhiteboardGUI extends JFrame {
 
@@ -41,8 +43,13 @@ public class WhiteboardGUI extends JFrame {
         }
         add(menuBar, BorderLayout.NORTH);
 
-
-        canvas = new Canvas();
+        RemoteService remoteService = null;
+        try {
+            remoteService = new RemoteService();
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        canvas = new Canvas(remoteService);
         add(canvas, BorderLayout.CENTER);
 
         setVisible(true);

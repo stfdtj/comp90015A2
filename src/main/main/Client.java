@@ -8,7 +8,7 @@ import javax.swing.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-public class Client extends Canvas {
+public class Client {
 
     // true-server; false-client
     private static boolean identity;
