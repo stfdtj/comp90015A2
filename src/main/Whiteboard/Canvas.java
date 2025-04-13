@@ -5,11 +5,14 @@ import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
 
-public class Canvas extends JPanel implements WhiteboardFunctions,
-        WindowListener,
+public class Canvas extends JPanel implements WindowListener,
         ActionListener,
         MouseListener,
         MouseMotionListener {
+
+
+    private DrawingMode dm;
+
 
     public Canvas() {
         this.setLayout(new BorderLayout());
@@ -17,13 +20,9 @@ public class Canvas extends JPanel implements WhiteboardFunctions,
         toolbar.setBackground(new Color(187,222,214,255));
         add(toolbar, BorderLayout.NORTH);
         this.setBackground(Color.WHITE);
+        dm = new DrawingMode();
     }
 
-
-    @Override
-    public void drawLine() throws RemoteException {
-
-    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
