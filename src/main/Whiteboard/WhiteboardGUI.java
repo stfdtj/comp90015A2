@@ -1,7 +1,10 @@
 package Whiteboard;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -17,6 +20,13 @@ public class WhiteboardGUI extends JFrame {
         setSize(1920, 1080);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        try {
+            Image icon = ImageIO.read(new File("src/main/Whiteboard/resources/whiteboard_icon.png"));
+            this.setIconImage(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
         JPanel titleBar = new JPanel();

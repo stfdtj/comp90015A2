@@ -11,26 +11,24 @@ import java.util.List;
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 
 
-    // list of line segments drawn locally
-    private List<Line2D> lines = new ArrayList();
+    List<ShapeCustom> shapes = new ArrayList<>();
     // a preview, not finalized
     private Shape previewShape = null;
 
-    // all shapes drawn
-    private List<Shape> shapes = new ArrayList();
 
     private Point currentPoint = null;
     // active drawing mode.
     private DrawingMode mode = DrawingMode.FREE;
 
     private Color currColor = Color.BLACK;
+    private Color backgroundColor = Color.WHITE;
 
 
     private WhiteboardFunctions remoteService;
 
     public Canvas(WhiteboardFunctions service) {
         this.remoteService = service;
-        setBackground(Color.WHITE);
+        setBackground(backgroundColor);
         addMouseListener(this);
         addMouseMotionListener(this);
         this.add(createToolbar());
@@ -51,7 +49,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     public synchronized void addLineSegment(Point start, Point end) {
         // add the line locally
         Line2D line = new Line2D.Float(start, end);
-        lines.add(line);
+        shapes.add(new ShapeCustom(new Line2D.Float(start, end), currColor));
         repaint();
 
 
@@ -81,8 +79,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
+    public synchronized void addOval(Point start, Point end) {
+        DrawingInfo info = new DrawingInfo(start.x, start.y, end.x, end.y, this.currColor);
+        try {
+            this.remoteService.DrawOval(info);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public synchronized void addTriangle(Point start, Point end) {
+        DrawingInfo info = new DrawingInfo(start.x, start.y, end.x, end.y, this.currColor);
+        try {
+            this.remoteService.DrawTriangle(info);
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public synchronized void addShape(Shape s) {
-        shapes.add(s);
+        shapes.add(new ShapeCustom(s, currColor));
         repaint();
     }
 
@@ -91,16 +107,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        for (Line2D line : lines) {
-            g2.draw(line);
+        for (ShapeCustom shape : shapes) {
+            g2.setColor(shape.getColor());
+            g2.draw(shape.getShape());
         }
         if (previewShape != null) {
             g2.setColor(currColor);
             g2.draw(previewShape);
         }
-        for (Shape s : shapes) {
-            g2.draw(s);
-        }
+
     }
 
     public void setPreviewShape(Shape s) {
@@ -139,9 +154,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     @Override public void mouseExited(MouseEvent e) {}
     @Override public void mouseMoved(MouseEvent e) {}
 
-    // switch
+    // switch current mode
     public void setDrawingMode(DrawingMode mode) {
         this.mode = mode;
+    }
+
+    // set fore colour
+    public void setForeColor(Color c) {
+        this.currColor = c;
     }
 
 
@@ -150,7 +170,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private JPanel createToolbar() {
         JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-        // Shapes Panel
+        // shapes Panel
         JPanel shapesPanel = new JPanel();
         shapesPanel.setBorder(BorderFactory.createTitledBorder("Shapes"));
         shapesPanel.setBackground(new Color(187,222,214,255));
@@ -165,23 +185,37 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 this.setDrawingMode(DrawingMode.RECTANGLE);
             } else if(selected.equals("Free")) {
                 this.setDrawingMode(DrawingMode.FREE);
+            } else if(selected.equals("Oval")) {
+                this.setDrawingMode(DrawingMode.OVAL);
+            } else if(selected.equals("Triangle")) {
+                this.setDrawingMode(DrawingMode.TRIANGLE);
             }
 
         });
         shapesPanel.add(shapeSelector);
 
 
-        // Tools Panel
+        // tools Panel
         JPanel toolsPanel = new JPanel();
         toolsPanel.setBorder(BorderFactory.createTitledBorder("Tools"));
         toolsPanel.setBackground(new Color(187,222,214,255));
 
-        JButton pencilBtn = new JButton("✏️");
-        JButton eraserBtn = new JButton("🩹");
+        // processing image
+        Image pencil = new ImageIcon("src/main/Whiteboard/resources/pencil.png").getImage();
+        pencil = pencil.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+        Image rubber = new ImageIcon("src/main/Whiteboard/resources/rubber.png").getImage();
+        rubber = rubber.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
+
+        JButton pencilBtn = new JButton(new ImageIcon(pencil));
+        JButton eraserBtn = new JButton(new ImageIcon(rubber));
+        eraserBtn.addActionListener(e -> {
+            this.setDrawingMode(DrawingMode.FREE);
+            this.setForeColor(backgroundColor);
+        });
         toolsPanel.add(pencilBtn);
         toolsPanel.add(eraserBtn);
 
-        // Color Panel
+        // color Panel
         JPanel colorPanel = new JPanel();
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
         colorPanel.setBackground(new Color(187,222,214,255));
@@ -194,7 +228,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             colorPanel.add(colorBtn);
         }
 
-        // Add all panels to toolbar
+        // add all panels to toolbar
         toolbar.add(shapesPanel);
         toolbar.add(Box.createRigidArea(new Dimension(15, 0)));
         toolbar.add(toolsPanel);

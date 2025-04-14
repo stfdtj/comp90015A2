@@ -2,8 +2,10 @@ package Whiteboard;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.Polygon.*;
 
 public enum DrawingMode {
     FREE {
@@ -86,7 +88,74 @@ public enum DrawingMode {
                 start = null;
             }
         }
-    };
+    },
+    OVAL{
+        Point start = null;
+        @Override
+        public void mousePressed(MouseEvent e, Canvas canvas) {
+            start = e.getPoint();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e, Canvas canvas) {
+            if (start != null) {
+                Point end = e.getPoint();
+                double height = Math.abs(start.getY() - end.getY());
+                double width = Math.abs(start.getX() - end.getX());
+                Ellipse2D oval = new Ellipse2D.Double(start.x, start.y, width, height);
+                canvas.setPreviewShape(oval);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e, Canvas canvas) {
+            if (start != null) {
+                Point end = e.getPoint();
+                double height = Math.abs(start.getY() - end.getY());
+                double width = Math.abs(start.getX() - end.getX());
+                Ellipse2D oval = new Ellipse2D.Double(start.x, start.y, width, height);
+                canvas.addShape(oval);
+                canvas.clearPreviewShape();
+                canvas.addOval(start, end);
+                start = null;
+            }
+        }
+    },
+    TRIANGLE {
+        Point start = null;
+        @Override
+        public void mousePressed(MouseEvent e, Canvas canvas) {
+            start = e.getPoint();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e, Canvas canvas) {
+            if (start != null) {
+                Point end = e.getPoint();
+                int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
+                int[] yPoints = {end.y, end.y, start.y};
+                Polygon triangle = new Polygon(xPoints, yPoints, 3);
+                canvas.setPreviewShape(triangle);
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e, Canvas canvas) {
+            if (start != null) {
+                Point end = e.getPoint();
+                int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
+                int[] yPoints = {end.y, end.y, start.y};
+                Polygon triangle = new Polygon(xPoints, yPoints, 3);
+                canvas.clearPreviewShape();
+                canvas.addShape(triangle);
+                canvas.addTriangle(start, end);
+                start = null;
+            }
+        }
+
+    },
+    ;
+
 
     public abstract void mousePressed(MouseEvent e, Canvas canvas);
     public abstract void mouseDragged(MouseEvent e, Canvas canvas);

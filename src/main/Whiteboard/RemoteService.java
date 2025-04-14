@@ -23,4 +23,16 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public void DrawRectangle(DrawingInfo info) throws RemoteException {
 
     }
+
+    @Override
+    public void DrawOval(DrawingInfo info) throws RemoteException {
+
+    }
+
+    @Override
+    public void DrawTriangle(DrawingInfo info) throws RemoteException {
+
+    }
+
+
 }

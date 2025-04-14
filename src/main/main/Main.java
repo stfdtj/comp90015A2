@@ -1,10 +1,12 @@
 package main;
 
 
-import Whiteboard.WhiteboardGUI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -33,6 +35,13 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
         frame.setLocationRelativeTo(null);
+
+        try {
+            Image icon = ImageIO.read(new File("src/main/main/resources/whiteboard_icon.png"));
+            frame.setIconImage(icon);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
