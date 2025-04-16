@@ -1,46 +1,44 @@
 package main;
 
-import Whiteboard.Canvas;
+import Whiteboard.UpdateHandler;
+import Whiteboard.UpdateListener;
 import Whiteboard.WhiteboardFunctions;
 import Whiteboard.WhiteboardGUI;
 
-import javax.swing.*;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.rmi.Naming;
 
 public class Client {
 
     // true-server; false-client
-    private static boolean identity;
+    private static boolean identity = false;
     private static String userName;
     private static String boardName;
     private static WhiteboardGUI gui;
+    private static String ip;
+    private static int port;
 
-    public Client(boolean identity, String userName, String boardName) {
-        this.identity = identity;
-        this.userName = userName;
-        this.boardName = boardName;
-
-        SwingUtilities.invokeLater(() -> {
-            gui = new WhiteboardGUI(identity, userName, boardName);
-        });
-    }
 
     public static void main(String[] args) {
+        ip = args[0];
+        port = Integer.parseInt(args[1]);
+        userName = args[2];
+        boardName = ip + "'s whiteboard";
+        gui = new WhiteboardGUI(identity, userName, boardName);
         try {
-            // Getting the registry
-            Registry registry = LocateRegistry.getRegistry(null);
+            // 1. Connect to RMI server
+            String name = "rmi://"+ip+":"+port+"/Whiteboard";
+            WhiteboardFunctions server = (WhiteboardFunctions) Naming.lookup(name);
 
-            // Looking up the registry for the remote object
-            WhiteboardFunctions stub = (WhiteboardFunctions) registry.lookup("Hello");
+            // 2. Create and register your callback
+            UpdateListener listener = new UpdateListener(gui.canvas);
+            // If UpdateListener already extends UnicastRemoteObject, do not call exportObject again:
+            UpdateHandler stub = listener;  // No extra export call needed
+            server.RegisterClient(stub);
 
-            // Calling the remote method using the obtained object
 
-
-            // System.out.println("Remote method invoked");
         } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
+
     }
 }

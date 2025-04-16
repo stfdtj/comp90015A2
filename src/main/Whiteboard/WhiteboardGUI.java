@@ -6,11 +6,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
 public class WhiteboardGUI extends JFrame {
 
-    private Canvas canvas;
+    public Canvas canvas;
 
 
 
@@ -20,6 +19,7 @@ public class WhiteboardGUI extends JFrame {
         setSize(1920, 1080);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
 
         try {
             Image icon = ImageIO.read(new File("src/main/Whiteboard/resources/whiteboard_icon.png"));
@@ -59,11 +59,22 @@ public class WhiteboardGUI extends JFrame {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
+
         canvas = new Canvas(remoteService);
-        add(canvas, BorderLayout.CENTER);
+
+        JPanel canvasContainer = new JPanel(new BorderLayout());
+        JPanel toolbarPanel = canvas.createToolbar();            // create toolbar
+        JPanel thicknessPanel = canvas.createThicknessPanel();   // create slider
+
+        canvasContainer.add(toolbarPanel, BorderLayout.NORTH);   // toolbar
+        canvasContainer.add(thicknessPanel, BorderLayout.WEST);  // thickness
+        canvasContainer.add(canvas, BorderLayout.CENTER);        // canvas
+
+        add(canvasContainer, BorderLayout.CENTER);
 
         setVisible(true);
     }
+
 
     private void SetServerPack(JPanel menuBar) {
         String[] buttons = {"File", "Invite", "Manage Clients"};

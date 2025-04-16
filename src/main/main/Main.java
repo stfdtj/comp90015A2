@@ -13,7 +13,7 @@ import java.util.ArrayList;
 * colours:
 * blue:138,198,209,255
 * green: 187,222,214,255
-* skin: 187,222,214,255
+* skin: 243,243,243,255
 * pink: 255,182,185,255
 * */
 
@@ -85,21 +85,22 @@ public class Main {
 
         // create new white board
         createBtn.addActionListener(e -> {
-            Server server = new Server(true, "triss", "a board");
+            // identity, username, boardname, port
+            Server.main(new String[]{"true", "triss", "board", "8080"});
         });
 
 
         // open existing whiteboard
         openBtn.addActionListener(e -> {
             System.out.println("Open selected");
-            // TODO: File dialog or load from saved session
+            Server.main(new String[]{});
         });
 
 
         // join someone as client
         joinBtn.addActionListener(e -> {
-            System.out.println("Join selected");
-            Client client = new Client(false, "triss", "board");
+            // ip, port, username
+            Client.main(new String[]{"192.168.0.24", "1099", "triss"});
         });
     }
 }

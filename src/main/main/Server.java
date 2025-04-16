@@ -1,8 +1,11 @@
 package main;
 
+import Whiteboard.RemoteService;
 import Whiteboard.WhiteboardGUI;
 
-import javax.swing.*;
+import java.net.InetAddress;
+import java.rmi.Naming;
+import java.rmi.registry.LocateRegistry;
 
 public class Server  {
 
@@ -11,33 +14,31 @@ public class Server  {
     private static String userName;
     private static String boardName;
     private static WhiteboardGUI gui;
+    private static int port;
 
-    public Server(boolean identity, String userName, String boardName) {
-        this.identity = identity;
-        this.userName = userName;
-        this.boardName = boardName;
-
-        SwingUtilities.invokeLater(() -> {
-            gui = new WhiteboardGUI(identity, userName, boardName);
-        });
-    }
 
     public static void main(String args[]) {
+        identity = Boolean.parseBoolean(args[0]);
+        userName = args[1];
+        boardName = args[2];
+        port = Integer.parseInt(args[3]);
+        gui = new WhiteboardGUI(identity, userName, boardName);
+
         try {
-            // Instantiating the implementation class
-            //DrawingMode dm = new DrawingMode();
+            // 1. Start registry
+            LocateRegistry.createRegistry(1099);
 
-            // Exporting the object of implementation class
-            // (here we are exporting the remote object to the stub)
-            //WhiteboardFunctions stub = (WhiteboardFunctions) UnicastRemoteObject.exportObject(dm, 0);
+            // 2. Create remote object
+            RemoteService service = new RemoteService();
 
-            // Binding the remote object (stub) in the registry
-            //Registry registry = LocateRegistry.getRegistry();
+            // 3. Bind to registry
+            Naming.rebind("Whiteboard", service);
 
-            //registry.bind("Hello", stub);
-            //System.err.println("Server ready");
+            System.out.println("Server is running...");
+            String ip = InetAddress.getLocalHost().getHostAddress();
+            System.out.println("My IP: " + ip);
+
         } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
     }

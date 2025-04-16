@@ -6,8 +6,9 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.Polygon.*;
+import java.io.Serializable;
 
-public enum DrawingMode {
+public enum DrawingMode implements Serializable {
     FREE {
 
         @Override
