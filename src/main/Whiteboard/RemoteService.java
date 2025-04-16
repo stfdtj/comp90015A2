@@ -23,7 +23,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public void BroadcastDrawing(DrawingInfo info) throws RemoteException {
         for (UpdateHandler client : clients) {
             try {
-                client.SayHi("hello");
                 System.out.println("Broadcast drawing: " + info);
                 client.receiveDrawing(info);
                 System.out.println("Broadcast drawing finished.");
@@ -35,10 +34,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         }
     }
 
-    @Override
-    public void sayHello(String msg) throws RemoteException {
-        System.out.println("Say Hello11: " + msg);
-    }
 
 
 }
