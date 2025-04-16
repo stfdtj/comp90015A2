@@ -43,15 +43,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         setBackground(backgroundColor);
         addMouseListener(this);
         addMouseMotionListener(this);
-
-        if (identiy) {
-            try{
-                remoteService.sayHello("hii");
-            }catch(RemoteException e){
-                e.printStackTrace();
-            }
-        }
-
+        
 
     }
 
