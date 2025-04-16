@@ -23,7 +23,7 @@ public class Client {
         port = Integer.parseInt(args[1]);
         userName = args[2];
         boardName = ip + "'s whiteboard";
-        gui = new WhiteboardGUI(identity, userName, boardName);
+        gui = new WhiteboardGUI(identity, userName, boardName, null);
         try {
             // 1. Connect to RMI server
             String name = "rmi://"+ip+":"+port+"/Whiteboard";

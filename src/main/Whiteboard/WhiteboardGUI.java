@@ -10,16 +10,18 @@ import java.rmi.RemoteException;
 public class WhiteboardGUI extends JFrame {
 
     public Canvas canvas;
+    public RemoteService remoteService;
 
 
 
-    public WhiteboardGUI(Boolean identity, String userName, String boardName) {
+    public WhiteboardGUI(Boolean identity, String userName, String boardName, RemoteService remoteService) {
 
         setTitle(boardName);
         setSize(1920, 1080);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        this.remoteService = remoteService;
 
         try {
             Image icon = ImageIO.read(new File("src/main/Whiteboard/resources/whiteboard_icon.png"));
@@ -53,14 +55,14 @@ public class WhiteboardGUI extends JFrame {
         }
         add(menuBar, BorderLayout.NORTH);
 
-        RemoteService remoteService = null;
-        try {
-            remoteService = new RemoteService();
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
+        if (identity) {
+
+            canvas = new Canvas(remoteService, identity);
+
+        }else {
+            canvas = new Canvas(null, identity);
         }
 
-        canvas = new Canvas(remoteService);
 
         JPanel canvasContainer = new JPanel(new BorderLayout());
         JPanel toolbarPanel = canvas.createToolbar();            // create toolbar

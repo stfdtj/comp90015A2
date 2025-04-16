@@ -7,4 +7,5 @@ public interface WhiteboardFunctions extends Remote {
 
     void RegisterClient(UpdateHandler client) throws RemoteException;
     void BroadcastDrawing(DrawingInfo info) throws RemoteException;
+    void sayHello(String msg) throws RemoteException;
 }

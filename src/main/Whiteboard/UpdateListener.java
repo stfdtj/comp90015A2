@@ -17,6 +17,11 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
         });
     }
 
+    @Override
+    public void SayHi(String message) throws RemoteException {
+        System.out.println("UpdateListener: SayHi() called with message: " + message);
+    }
+
     public UpdateListener(Canvas canvas) throws RemoteException {
         super();
         this.canvas = canvas;

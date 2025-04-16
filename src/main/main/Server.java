@@ -22,7 +22,7 @@ public class Server  {
         userName = args[1];
         boardName = args[2];
         port = Integer.parseInt(args[3]);
-        gui = new WhiteboardGUI(identity, userName, boardName);
+
 
         try {
             // 1. Start registry
@@ -37,6 +37,7 @@ public class Server  {
             System.out.println("Server is running...");
             String ip = InetAddress.getLocalHost().getHostAddress();
             System.out.println("My IP: " + ip);
+            gui = new WhiteboardGUI(identity, userName, boardName, service);
 
         } catch (Exception e) {
             e.printStackTrace();
