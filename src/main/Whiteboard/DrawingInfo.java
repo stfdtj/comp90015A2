@@ -7,15 +7,13 @@ public class DrawingInfo implements Serializable {
     private Point start;
     private Point end;
     private Color color;
-    private String type;
     private DrawingMode drawingMode;
     private float thickness;
 
-    public DrawingInfo(Point start, Point end, Color color, String type, DrawingMode dm, float thickness) {
+    public DrawingInfo(Point start, Point end, Color color, DrawingMode dm, float thickness) {
         this.start = start;
         this.end = end;
         this.color = color;
-        this.type = type;
         this.drawingMode = dm;
         this.thickness = thickness;
     }
@@ -25,9 +23,6 @@ public class DrawingInfo implements Serializable {
     }
     public Point getEnd() {
         return end;
-    }
-    public String getShape() {
-        return type;
     }
 
     public float getThickness() {

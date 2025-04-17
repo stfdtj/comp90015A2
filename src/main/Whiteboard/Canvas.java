@@ -58,14 +58,26 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return currentPoint;
     }
 
-    // add a line locally and send the drawing command remotely
-    public synchronized void addLineSegment(Point start, Point end) {
-        // add the line locally
-        Shape line = CreateShape("Line", start, end);
-        shapes.add(new ShapeCustom(line, currColor, mode, thickness));
+    public synchronized void AddShapeLocalRemote(Point start, Point end, DrawingMode mode) {
+        DrawingInfo info;
+        if (mode.equals(DrawingMode.FREE)) {
+            Shape line = CreateShape(mode, start, end);
+            shapes.add(new ShapeCustom(line, currColor, mode, thickness));
+        } else if (mode.equals(DrawingMode.LINE)) {
+            Shape line = CreateShape(mode, start, end);
+            shapes.add(new ShapeCustom(line, currColor, mode, thickness));
+        } else if (mode.equals(DrawingMode.RECTANGLE)) {
+            Shape rect = CreateShape(mode, start, end);
+            shapes.add(new ShapeCustom(rect, currColor, mode, thickness));
+        } else if (mode.equals(DrawingMode.OVAL)) {
+            Shape oval = CreateShape(mode, start, end);
+            shapes.add(new ShapeCustom(oval, currColor, mode, thickness));
+        } else if (mode.equals(DrawingMode.TRIANGLE)) {
+            Shape triangle = CreateShape(mode, start, end);
+            shapes.add(new ShapeCustom(triangle, currColor, mode, thickness));
+        }
         repaint();
-
-        DrawingInfo info = new DrawingInfo(start, end, currColor, "Free", mode, thickness);
+        info = new DrawingInfo(start, end, currColor, mode, thickness);
 
         try {
             if (identity) {
@@ -77,76 +89,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         } catch (RemoteException ex) {
             ex.printStackTrace();
         }
-
     }
 
-    public synchronized void addLine(Point start, Point end) {
-        Shape line = CreateShape("Line", start, end);
-        shapes.add(new ShapeCustom(line, currColor, mode, thickness));
-        DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Line", mode, thickness);
-        try {
-            if (identity) {
-                remoteService.BroadcastDrawing(info);
-            } else {
-                remoteService.SendDrawings(info);
-            }
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    public synchronized void addRectangle(Point start, Point end) {
-        Shape rect = CreateShape("Rectangle", start, end);
-        shapes.add(new ShapeCustom(rect, currColor, mode, thickness));
-        DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Rectangle", mode, thickness);
-        try {
-            if (identity) {
-                remoteService.BroadcastDrawing(info);
-            } else {
-                remoteService.SendDrawings(info);
-            }
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public synchronized void addOval(Point start, Point end) {
-        Shape oval = CreateShape("Oval", start, end);
-        shapes.add(new ShapeCustom(oval, currColor, mode, thickness));
-        DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Oval", mode, thickness);
-        try {
-            if (identity) {
-                remoteService.BroadcastDrawing(info);
-            } else {
-                remoteService.SendDrawings(info);
-            }
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public synchronized void addTriangle(Point start, Point end) {
-        Shape triangle = CreateShape("Triangle", start, end);
-        shapes.add(new ShapeCustom(triangle, currColor, mode, thickness));
-        DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Triangle", mode, thickness);
-        try {
-            if (identity) {
-                remoteService.BroadcastDrawing(info);
-            } else {
-                remoteService.SendDrawings(info);
-            }
-        } catch (RemoteException ex) {
-            ex.printStackTrace();
-        }
-
-    }
 
 
     // client receive drawing from server
     public synchronized void ReceiveRemoteShape(DrawingInfo info) {
         try {
-            Shape shape = CreateShape(info.getShape(), info.getStart(), info.getEnd());
+            Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
             shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
             repaint();
         } catch (RuntimeException e) {
@@ -157,7 +107,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public synchronized void SendRemoteShape(DrawingInfo info) {
         try {
-            Shape shape = CreateShape(info.getShape(), info.getStart(), info.getEnd());
+            Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
             shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
             repaint();
         } catch (RuntimeException e) {
@@ -203,17 +153,24 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // mouse events
     @Override
     public void mousePressed(MouseEvent e) {
-        mode.mousePressed(e, this);
+        if(SwingUtilities.isLeftMouseButton(e)) {
+            mode.mousePressed(e, this);
+        }
+
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        mode.mouseDragged(e, this);
+        if(SwingUtilities.isLeftMouseButton(e)) {
+            mode.mouseDragged(e, this);
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        mode.mouseReleased(e, this);
+        if (SwingUtilities.isLeftMouseButton(e)) {
+            mode.mouseReleased(e, this);
+        }
     }
 
     // unused
@@ -261,7 +218,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if(selected.equals("Triangle")) {
                 this.setDrawingMode(DrawingMode.TRIANGLE);
             }
-
+            this.SetCurrColors(Color.BLACK);
         });
         shapesPanel.add(shapeSelector);
 
@@ -301,13 +258,31 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         JPanel colorPanel = new JPanel();
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
         colorPanel.setBackground(new Color(243,243,243,255));
-        Color[] palette = {Color.BLACK, Color.RED, Color.GREEN, Color.BLUE};
+        Color[] palette = {Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.CYAN};
+
+        JColorChooser colorChooser = new JColorChooser();
+        JButton curr = new JButton();
+        curr.setBackground(currColor);
+        curr.setPreferredSize(new Dimension(40, 40));
+        curr.addActionListener(e -> {
+            Color selected = JColorChooser.showDialog(null, "Select Color", colorChooser.getColor());
+            if (selected != null) {
+                this.SetCurrColors(selected);
+                curr.setBackground(selected);
+                colorChooser.setColor(selected);
+            }
+        });
+        colorPanel.add(curr);
         for (Color c : palette) {
             JButton colorBtn = new JButton();
             colorBtn.setBackground(c);
             colorBtn.setPreferredSize(new Dimension(20, 20));
             colorBtn.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             colorPanel.add(colorBtn);
+            colorBtn.addActionListener(e -> {
+                SetCurrColors(c);
+                curr.setBackground(currColor);
+            });
         }
 
         // add all panels to toolbar
@@ -361,24 +336,34 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     // return a shape
-    public Shape CreateShape(String type, Point start, Point end) {
-        if (type.equals("Oval")) {
-            double height = Math.abs(start.getY() - end.getY());
-            double width = Math.abs(start.getX() - end.getX());
-            return new Ellipse2D.Double(start.x, start.y, width, height);
-        } else if (type.equals("Triangle")) {
-            int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
-            int[] yPoints = {end.y, end.y, start.y};
-            return new Polygon(xPoints, yPoints, 3);
-        } else if (type.equals("Line")) {
-            return new Line2D.Double(start, end);
-        } else if (type.equals("Rectangle")) {
-            double height = Math.abs(start.getY() - end.getY());
-            double width = Math.abs(start.getX() - end.getX());
-            return new Rectangle2D.Double(start.x, start.y, width, height);
-        } else if (type.equals("Free")) {
-            return new Line2D.Double(start, end);
-        } else return null;
+    public Shape CreateShape(DrawingMode mode, Point start, Point end) {
+        try {
+            if (mode.equals(DrawingMode.OVAL)) {
+                double height = Math.abs(start.getY() - end.getY());
+                double width = Math.abs(start.getX() - end.getX());
+                return new Ellipse2D.Double(start.x, start.y, width, height);
+            } else if (mode.equals(DrawingMode.TRIANGLE)) {
+                int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
+                int[] yPoints = {end.y, end.y, start.y};
+                return new Polygon(xPoints, yPoints, 3);
+            } else if (mode.equals(DrawingMode.LINE)) {
+                return new Line2D.Double(start, end);
+            } else if (mode.equals(DrawingMode.RECTANGLE)) {
+                double height = Math.abs(start.getY() - end.getY());
+                double width = Math.abs(start.getX() - end.getX());
+                return new Rectangle2D.Double(start.x, start.y, width, height);
+            } else if (mode.equals(DrawingMode.FREE)) {
+                return new Line2D.Double(start, end);
+            } else return null;
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    public void SetCurrColors(Color color) {
+        this.currColor = color;
     }
 
 }

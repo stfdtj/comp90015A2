@@ -35,6 +35,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     @Override
     public void SendDrawings(DrawingInfo info) throws RemoteException {
         canvas.SendRemoteShape(info);
+        BroadcastDrawing(info);
     }
 
     public void SetCanvas(Canvas canvas) {

@@ -1,5 +1,6 @@
 package Whiteboard;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
@@ -13,6 +14,7 @@ public enum DrawingMode implements Serializable {
 
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             canvas.setCurrentPoint(e.getPoint());
         }
 
@@ -20,7 +22,7 @@ public enum DrawingMode implements Serializable {
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             Point last = canvas.getCurrentPoint();
             Point current = e.getPoint();
-            canvas.addLineSegment(last, current);
+            canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE);
             canvas.setCurrentPoint(current);
         }
 
@@ -34,6 +36,7 @@ public enum DrawingMode implements Serializable {
 
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
         }
 
@@ -51,7 +54,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape(); // remove preview
-                canvas.addLine(start, end);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.LINE);
                 start = null;
             }
         }
@@ -60,6 +63,7 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
         }
 
@@ -79,7 +83,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.addRectangle(start, end);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.RECTANGLE);
                 start = null;
             }
         }
@@ -88,6 +92,7 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
         }
 
@@ -107,7 +112,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.addOval(start, end);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.OVAL);
                 start = null;
             }
         }
@@ -116,6 +121,7 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
+            if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
         }
 
@@ -135,7 +141,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.addTriangle(start, end);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.TRIANGLE);
                 start = null;
             }
         }
