@@ -7,15 +7,15 @@ import java.util.ArrayList;
 public class RemoteService extends UnicastRemoteObject implements WhiteboardFunctions {
 
     private ArrayList<UpdateHandler> clients = new ArrayList<>();
+    private Canvas canvas;
 
     public RemoteService() throws RemoteException {
+
     }
 
     @Override
     public void RegisterClient(UpdateHandler client) throws RemoteException {
         clients.add(client);
-        System.out.println("Client registered.");
-        System.out.println("Client class: " + client.getClass().getName());
 
     }
 
@@ -23,9 +23,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public void BroadcastDrawing(DrawingInfo info) throws RemoteException {
         for (UpdateHandler client : clients) {
             try {
-                System.out.println("Broadcast drawing: " + info);
                 client.receiveDrawing(info);
-                System.out.println("Broadcast drawing finished.");
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (RuntimeException e) {
@@ -34,6 +32,13 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         }
     }
 
+    @Override
+    public void SendDrawings(DrawingInfo info) throws RemoteException {
+        canvas.SendRemoteShape(info);
+    }
 
+    public void SetCanvas(Canvas canvas) {
+        this.canvas = canvas;
+    }
 
 }

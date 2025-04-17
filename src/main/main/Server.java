@@ -1,6 +1,7 @@
 package main;
 
 import Whiteboard.RemoteService;
+import Whiteboard.WhiteboardFunctions;
 import Whiteboard.WhiteboardGUI;
 
 import java.net.InetAddress;
@@ -15,6 +16,7 @@ public class Server  {
     private static String boardName;
     private static WhiteboardGUI gui;
     private static int port;
+    public static WhiteboardFunctions service;
 
 
     public static void main(String args[]) {
@@ -25,19 +27,17 @@ public class Server  {
 
 
         try {
-            // 1. Start registry
             LocateRegistry.createRegistry(1099);
 
-            // 2. Create remote object
-            RemoteService service = new RemoteService();
+            service = new RemoteService();
 
-            // 3. Bind to registry
             Naming.rebind("Whiteboard", service);
 
             System.out.println("Server is running...");
             String ip = InetAddress.getLocalHost().getHostAddress();
             System.out.println("My IP: " + ip);
             gui = new WhiteboardGUI(identity, userName, boardName, service);
+            ((RemoteService) service).SetCanvas(gui.canvas);
 
         } catch (Exception e) {
             e.printStackTrace();

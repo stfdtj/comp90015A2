@@ -1,9 +1,6 @@
 package main;
 
-import Whiteboard.UpdateHandler;
-import Whiteboard.UpdateListener;
-import Whiteboard.WhiteboardFunctions;
-import Whiteboard.WhiteboardGUI;
+import Whiteboard.*;
 
 import java.rmi.Naming;
 
@@ -23,17 +20,18 @@ public class Client {
         port = Integer.parseInt(args[1]);
         userName = args[2];
         boardName = ip + "'s whiteboard";
-        gui = new WhiteboardGUI(identity, userName, boardName, null);
         try {
-            // 1. Connect to RMI server
+
             String name = "rmi://"+ip+":"+port+"/Whiteboard";
             WhiteboardFunctions server = (WhiteboardFunctions) Naming.lookup(name);
 
-            // 2. Create and register your callback
+            gui = new WhiteboardGUI(identity, userName, boardName, server);
+
             UpdateListener listener = new UpdateListener(gui.canvas);
-            // If UpdateListener already extends UnicastRemoteObject, do not call exportObject again:
-            UpdateHandler stub = listener;  // No extra export call needed
+
+            UpdateHandler stub = listener;
             server.RegisterClient(stub);
+
 
 
         } catch (Exception e) {

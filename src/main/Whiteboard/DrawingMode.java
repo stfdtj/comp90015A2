@@ -50,8 +50,6 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
-                Line2D finalLine = new Line2D.Float(start, end);
-                canvas.addShape(finalLine); // local draw
                 canvas.clearPreviewShape(); // remove preview
                 canvas.addLine(start, end);
                 start = null;
@@ -80,10 +78,6 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
-                double height = Math.abs(start.getY() - end.getY());
-                double width = Math.abs(start.getX() - end.getX());
-                Rectangle2D rect = new Rectangle2D.Double(start.x, start.y, width, height);
-                canvas.addShape(rect);
                 canvas.clearPreviewShape();
                 canvas.addRectangle(start, end);
                 start = null;
@@ -112,10 +106,6 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
-                double height = Math.abs(start.getY() - end.getY());
-                double width = Math.abs(start.getX() - end.getX());
-                Ellipse2D oval = new Ellipse2D.Double(start.x, start.y, width, height);
-                canvas.addShape(oval);
                 canvas.clearPreviewShape();
                 canvas.addOval(start, end);
                 start = null;
@@ -144,11 +134,7 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
-                int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
-                int[] yPoints = {end.y, end.y, start.y};
-                Polygon triangle = new Polygon(xPoints, yPoints, 3);
                 canvas.clearPreviewShape();
-                canvas.addShape(triangle);
                 canvas.addTriangle(start, end);
                 start = null;
             }

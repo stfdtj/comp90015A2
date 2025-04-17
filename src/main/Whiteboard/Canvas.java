@@ -15,7 +15,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     Image pencil = new ImageIcon("src/main/Whiteboard/resources/pencil.png").getImage();
     Image rubber = new ImageIcon("src/main/Whiteboard/resources/rubber.png").getImage();
     Image text = new ImageIcon("src/main/Whiteboard/resources/text.png").getImage();
-    private boolean identiy;
+    private final boolean identity;
 
     private JSlider slider;
 
@@ -25,7 +25,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
     private Point currentPoint = null;
-    // active drawing mode.
+
     private DrawingMode mode = DrawingMode.FREE;
 
     private Color currColor = Color.BLACK;
@@ -38,17 +38,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public Canvas(WhiteboardFunctions service, boolean identity) {
         this.remoteService = service;
-        this.identiy = identity;
+        this.identity = identity;
         this.setLayout(new BorderLayout());
         setBackground(backgroundColor);
         addMouseListener(this);
         addMouseMotionListener(this);
-        
+
 
     }
 
 
-    // helper functions
+
     // record start point
     public void setCurrentPoint(Point p) {
         this.currentPoint = p;
@@ -66,13 +66,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
 
         DrawingInfo info = new DrawingInfo(start, end, currColor, "Free", mode, thickness);
-        if (identiy) {
-            try {
+
+        try {
+            if (identity) {
                 remoteService.BroadcastDrawing(info);
-                System.out.println("broadcasting " + info);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
+            } else {
+                remoteService.SendDrawings(info);
             }
+
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
 
     }
@@ -81,13 +84,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         Shape line = CreateShape("Line", start, end);
         shapes.add(new ShapeCustom(line, currColor, mode, thickness));
         DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Line", mode, thickness);
-        if (identiy) {
-            try {
+        try {
+            if (identity) {
                 remoteService.BroadcastDrawing(info);
-                System.out.println("broadcasting " + info);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
+            } else {
+                remoteService.SendDrawings(info);
             }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
 
     }
@@ -96,13 +100,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         Shape rect = CreateShape("Rectangle", start, end);
         shapes.add(new ShapeCustom(rect, currColor, mode, thickness));
         DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Rectangle", mode, thickness);
-        if (identiy) {
-            try {
+        try {
+            if (identity) {
                 remoteService.BroadcastDrawing(info);
-                System.out.println("broadcasting " + info);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
+            } else {
+                remoteService.SendDrawings(info);
             }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -110,13 +115,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         Shape oval = CreateShape("Oval", start, end);
         shapes.add(new ShapeCustom(oval, currColor, mode, thickness));
         DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Oval", mode, thickness);
-        if (identiy) {
-            try {
+        try {
+            if (identity) {
                 remoteService.BroadcastDrawing(info);
-                System.out.println("broadcasting " + info);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
+            } else {
+                remoteService.SendDrawings(info);
             }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -124,29 +130,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         Shape triangle = CreateShape("Triangle", start, end);
         shapes.add(new ShapeCustom(triangle, currColor, mode, thickness));
         DrawingInfo info = new DrawingInfo(start, end, this.currColor, "Triangle", mode, thickness);
-        if (identiy) {
-            try {
+        try {
+            if (identity) {
                 remoteService.BroadcastDrawing(info);
-                System.out.println("broadcasting " + info);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
+            } else {
+                remoteService.SendDrawings(info);
             }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
         }
 
     }
 
-    public synchronized void addShape(Shape s) {
-        shapes.add(new ShapeCustom(s, currColor, mode, thickness));
-        repaint();
-    }
 
+    // client receive drawing from server
     public synchronized void ReceiveRemoteShape(DrawingInfo info) {
-        System.out.println(info.getShape().toString());
         try {
-            System.out.println("Received Remote Shape: " + info.getShape());
-            if (info.getShape() == null) {
-                System.err.println("Warning: shape in DrawingInfo is null!");
-            }
             Shape shape = CreateShape(info.getShape(), info.getStart(), info.getEnd());
             shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
             repaint();
@@ -156,7 +155,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     }
 
-    // render the drawn shapes.
+    public synchronized void SendRemoteShape(DrawingInfo info) {
+        try {
+            Shape shape = CreateShape(info.getShape(), info.getStart(), info.getEnd());
+            shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
+            repaint();
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+
+    // render the drawn shapes
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -174,11 +185,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     }
 
+
+    // create a preview
     public void setPreviewShape(Shape s) {
         this.previewShape = s;
         repaint();
     }
 
+    // make preview disappear
     public void clearPreviewShape() {
         this.previewShape = null;
         repaint();
@@ -275,7 +289,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             this.setDrawingMode(DrawingMode.FREE);
             this.setForeColor(Color.BLACK);
         });
-        textBtn.addActionListener(e -> {});
+        textBtn.addActionListener(e -> {
+
+        });
+
         toolsPanel.add(pencilBtn);
         toolsPanel.add(eraserBtn);
         toolsPanel.add(textBtn);
@@ -302,7 +319,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return toolbar;
     }
 
-
+    // thickness slider
     public JPanel createThicknessPanel() {
         JPanel sliderPanel = new JPanel();
         sliderPanel.setBackground(new Color(243,243,243,255));
@@ -338,31 +355,30 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return sliderPanel;
     }
 
+    // map thickness with slider
     public void SetSlider(float value) {
         slider.setValue((int) value);
     }
 
+    // return a shape
     public Shape CreateShape(String type, Point start, Point end) {
-        Shape shape = null;
         if (type.equals("Oval")) {
-            Ellipse2D oval = new Ellipse2D.Double(start.x, start.y, end.x, end.y);
-            return oval;
+            double height = Math.abs(start.getY() - end.getY());
+            double width = Math.abs(start.getX() - end.getX());
+            return new Ellipse2D.Double(start.x, start.y, width, height);
         } else if (type.equals("Triangle")) {
             int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
             int[] yPoints = {end.y, end.y, start.y};
-            Polygon triangle = new Polygon(xPoints, yPoints, 3);
-            return triangle;
+            return new Polygon(xPoints, yPoints, 3);
         } else if (type.equals("Line")) {
-            Line2D line = new Line2D.Double(start, end);
-            return line;
+            return new Line2D.Double(start, end);
         } else if (type.equals("Rectangle")) {
-            Rectangle2D rect = new Rectangle2D.Double(start.x, start.y, end.x, end.y);
-            return rect;
+            double height = Math.abs(start.getY() - end.getY());
+            double width = Math.abs(start.getX() - end.getX());
+            return new Rectangle2D.Double(start.x, start.y, width, height);
         } else if (type.equals("Free")) {
-            Line2D line = new Line2D.Double(start, end);
-            return line;
-        }
-        return shape;
+            return new Line2D.Double(start, end);
+        } else return null;
     }
 
 }
