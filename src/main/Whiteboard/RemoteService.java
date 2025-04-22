@@ -32,6 +32,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         }
     }
 
+    // after send drawings to server should send drawings to every client
     @Override
     public void SendDrawings(DrawingInfo info) throws RemoteException {
         canvas.SendRemoteShape(info);

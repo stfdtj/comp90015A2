@@ -4,11 +4,11 @@ import java.awt.*;
 import java.io.Serializable;
 
 public class DrawingInfo implements Serializable {
-    private Point start;
-    private Point end;
-    private Color color;
-    private DrawingMode drawingMode;
-    private float thickness;
+    private final Point start;
+    private final Point end;
+    private final Color color;
+    private final DrawingMode drawingMode;
+    private final float thickness;
 
     public DrawingInfo(Point start, Point end, Color color, DrawingMode dm, float thickness) {
         this.start = start;

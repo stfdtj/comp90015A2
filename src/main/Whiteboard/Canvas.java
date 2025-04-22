@@ -1,6 +1,10 @@
 package Whiteboard;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
@@ -10,39 +14,52 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.swing.plaf.basic.BasicGraphicsUtils.drawString;
+
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 
     Image pencil = new ImageIcon("src/main/Whiteboard/resources/pencil.png").getImage();
     Image rubber = new ImageIcon("src/main/Whiteboard/resources/rubber.png").getImage();
     Image text = new ImageIcon("src/main/Whiteboard/resources/text.png").getImage();
+
+    public final TextEditor textEditor = new TextEditor();
+
     private final boolean identity;
-
+    private final String username;
+    private final JLabel cursorLabel;
     private JSlider slider;
-
-    List<ShapeCustom> shapes = new ArrayList<>();
-    // a preview, not finalized
+    List<DrawingInfo> shapes = new ArrayList<>();
     private Shape previewShape = null;
-
-
     private Point currentPoint = null;
-
     private DrawingMode mode = DrawingMode.FREE;
-
     private Color currColor = Color.BLACK;
-    private Color backgroundColor = Color.WHITE;
+    private final Color backgroundColor = Color.WHITE;
     private float thickness = 3;
+    Toolkit toolkit = Toolkit.getDefaultToolkit();
+    Point active = new Point(0, 45);
+    Cursor defaultCursor = toolkit.createCustomCursor(pencil, active, "Pencil");
+    Cursor eraser = toolkit.createCustomCursor(rubber, active, "Rubber");
+    Cursor textCursor = toolkit.createCustomCursor(text, active, "Text");
+    JButton curr;
 
 
 
-    private WhiteboardFunctions remoteService;
+    private final WhiteboardFunctions remoteService;
 
-    public Canvas(WhiteboardFunctions service, boolean identity) {
+    public Canvas(WhiteboardFunctions service, boolean identity, String username) {
         this.remoteService = service;
         this.identity = identity;
-        this.setLayout(new BorderLayout());
+        this.username = username;
         setBackground(backgroundColor);
         addMouseListener(this);
         addMouseMotionListener(this);
+
+        // customized cursor
+        this.setCursor(defaultCursor);
+        cursorLabel = new JLabel(username);
+        cursorLabel.setSize(cursorLabel.getPreferredSize());
+        this.setLayout(null);
+        this.add(cursorLabel);
 
 
     }
@@ -58,27 +75,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return currentPoint;
     }
 
+    // paint locally and remotely
     public synchronized void AddShapeLocalRemote(Point start, Point end, DrawingMode mode) {
         DrawingInfo info;
-        if (mode.equals(DrawingMode.FREE)) {
-            Shape line = CreateShape(mode, start, end);
-            shapes.add(new ShapeCustom(line, currColor, mode, thickness));
-        } else if (mode.equals(DrawingMode.LINE)) {
-            Shape line = CreateShape(mode, start, end);
-            shapes.add(new ShapeCustom(line, currColor, mode, thickness));
-        } else if (mode.equals(DrawingMode.RECTANGLE)) {
-            Shape rect = CreateShape(mode, start, end);
-            shapes.add(new ShapeCustom(rect, currColor, mode, thickness));
-        } else if (mode.equals(DrawingMode.OVAL)) {
-            Shape oval = CreateShape(mode, start, end);
-            shapes.add(new ShapeCustom(oval, currColor, mode, thickness));
-        } else if (mode.equals(DrawingMode.TRIANGLE)) {
-            Shape triangle = CreateShape(mode, start, end);
-            shapes.add(new ShapeCustom(triangle, currColor, mode, thickness));
-        }
         repaint();
         info = new DrawingInfo(start, end, currColor, mode, thickness);
+        shapes.add(info);
 
+        // if this is server then broadcast to all clients
+        // else send drawings to server
         try {
             if (identity) {
                 remoteService.BroadcastDrawing(info);
@@ -96,8 +101,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // client receive drawing from server
     public synchronized void ReceiveRemoteShape(DrawingInfo info) {
         try {
-            Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
-            shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
+            shapes.add(info);
             repaint();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -105,10 +109,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     }
 
+    // send drawing to server
     public synchronized void SendRemoteShape(DrawingInfo info) {
         try {
-            Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
-            shapes.add(new ShapeCustom(shape, info.getColor(), info.getDrawingMode(), info.getThickness()));
+            shapes.add(info);
             repaint();
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
@@ -122,11 +126,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        for (ShapeCustom shape : shapes) {
-            g2.setColor(shape.color);
-            g2.setStroke(new BasicStroke(shape.thickness));
-            g2.draw(shape.shape);
+        for (DrawingInfo info : shapes) {
+            g2.setColor(info.getColor());
+            g2.setStroke(new BasicStroke(info.getThickness()));
+            Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
+            g2.draw(shape);
         }
+
         if (previewShape != null) {
             g2.setColor(currColor);
             g2.setStroke(new BasicStroke(thickness));
@@ -164,6 +170,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         if(SwingUtilities.isLeftMouseButton(e)) {
             mode.mouseDragged(e, this);
         }
+        Point p = e.getPoint();
+        int offsetY = 8;
+        cursorLabel.setLocation(p.x, p.y + offsetY);
+        repaint();
     }
 
     @Override
@@ -173,13 +183,24 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
-    // unused
+
+
     @Override public void mouseClicked(MouseEvent e) {
 
     }
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
-    @Override public void mouseMoved(MouseEvent e) {}
+    @Override public void mouseEntered(MouseEvent e) {
+        cursorLabel.setVisible(true);
+    }
+    @Override public void mouseExited(MouseEvent e) {
+        cursorLabel.setVisible(false);
+    }
+    @Override public void mouseMoved(MouseEvent e) {
+        Point p = e.getPoint();
+        int offsetY = 8;
+        cursorLabel.setLocation(p.x, p.y + offsetY);
+        repaint();
+
+    }
 
     // switch current mode
     public void setDrawingMode(DrawingMode mode) {
@@ -188,7 +209,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     // set fore colour
     public void setForeColor(Color c) {
-        this.currColor = c;
+
+        if (!mode.equals(DrawingMode.ERASER)) {
+            this.currColor = c;
+            curr.setForeground(c);
+        }
     }
 
 
@@ -205,7 +230,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         String[] shapes = {"Free", "Line", "Rectangle", "Oval", "Triangle"};
         JComboBox<String> shapeSelector = new JComboBox<>(shapes);
-        shapeSelector.addActionListener(e -> {
+        shapeSelector.addActionListener(_ -> {
             String selected = (String) shapeSelector.getSelectedItem();
             if (selected.equals("Line")) {
                 this.setDrawingMode(DrawingMode.LINE);
@@ -218,7 +243,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             } else if(selected.equals("Triangle")) {
                 this.setDrawingMode(DrawingMode.TRIANGLE);
             }
-            this.SetCurrColors(Color.BLACK);
+            // this.setForeColor(Color.BLACK);
+            this.setCursor(defaultCursor);
         });
         shapesPanel.add(shapeSelector);
 
@@ -237,17 +263,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         JButton pencilBtn = new JButton(new ImageIcon(pencil));
         JButton eraserBtn = new JButton(new ImageIcon(rubber));
         JButton textBtn = new JButton(new ImageIcon(text));
-        eraserBtn.addActionListener(e -> {
-            this.setDrawingMode(DrawingMode.FREE);
-            this.setForeColor(backgroundColor);
+        eraserBtn.addActionListener(_ -> {
+            this.setDrawingMode(DrawingMode.ERASER);
+            this.currColor = Color.WHITE;
             SetSlider(1);
+            this.setCursor(eraser);
         });
-        pencilBtn.addActionListener(e -> {
+        pencilBtn.addActionListener(_ -> {
             this.setDrawingMode(DrawingMode.FREE);
             this.setForeColor(Color.BLACK);
+            this.setCursor(defaultCursor);
+            this.currColor = Color.BLACK;
         });
-        textBtn.addActionListener(e -> {
-
+        textBtn.addActionListener(_ -> {
+            this.setDrawingMode(DrawingMode.TEXT);
+            this.setForeColor(Color.BLACK);
+            this.setCursor(textCursor);
         });
 
         toolsPanel.add(pencilBtn);
@@ -260,14 +291,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         colorPanel.setBackground(new Color(243,243,243,255));
         Color[] palette = {Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.CYAN};
 
+        // current color display
         JColorChooser colorChooser = new JColorChooser();
-        JButton curr = new JButton();
+        curr = new JButton();
         curr.setBackground(currColor);
         curr.setPreferredSize(new Dimension(40, 40));
-        curr.addActionListener(e -> {
+        curr.addActionListener(_ -> {
             Color selected = JColorChooser.showDialog(null, "Select Color", colorChooser.getColor());
             if (selected != null) {
-                this.SetCurrColors(selected);
+                this.setForeColor(selected);
                 curr.setBackground(selected);
                 colorChooser.setColor(selected);
             }
@@ -279,9 +311,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             colorBtn.setPreferredSize(new Dimension(20, 20));
             colorBtn.setBorder(BorderFactory.createLineBorder(Color.GRAY));
             colorPanel.add(colorBtn);
-            colorBtn.addActionListener(e -> {
-                SetCurrColors(c);
-                curr.setBackground(currColor);
+            colorBtn.addActionListener(_ -> {
+                this.setForeColor(c);
+                curr.setBackground(c);
             });
         }
 
@@ -322,7 +354,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         slider.setFocusable(false);
         slider.setBackground(new Color(243,243,243,255));
 
-        slider.addChangeListener(e -> {
+        slider.addChangeListener(_ -> {
             thickness = slider.getValue();
         });
 
@@ -362,8 +394,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     }
 
-    public void SetCurrColors(Color color) {
-        this.currColor = color;
+    public void AddTextBox(Point start, Point end) {
+        this.add(textEditor.CreateTextBox(start, end));
     }
+
+
 
 }
