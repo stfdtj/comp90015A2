@@ -16,6 +16,8 @@ public class WhiteboardGUI extends JFrame {
 
     public WhiteboardGUI(Boolean identity, String userName, String boardName, WhiteboardFunctions remoteService) {
 
+        Log.action("Creating WhiteboardGUI");
+
         setTitle(boardName);
         setSize(1920, 1080);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,6 +32,9 @@ public class WhiteboardGUI extends JFrame {
             e.printStackTrace();
         }
 
+        // key binding
+        KeyBindingManager.bindKeysToWhiteboard(this);
+        System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow());
 
         JPanel titleBar = new JPanel();
         titleBar.setBackground(new Color(255, 245, 190));
@@ -55,7 +60,10 @@ public class WhiteboardGUI extends JFrame {
         }
         add(menuBar, BorderLayout.NORTH);
 
+        Log.action("Creating Canvas");
         canvas = new Canvas(remoteService, identity, userName);
+
+
 
         JPanel canvasContainer = new JPanel(new BorderLayout());
         JPanel toolbarPanel = canvas.createToolbar();            // create toolbar
@@ -68,6 +76,7 @@ public class WhiteboardGUI extends JFrame {
         add(canvasContainer, BorderLayout.CENTER);
 
         setVisible(true);
+        revalidate();
     }
 
 

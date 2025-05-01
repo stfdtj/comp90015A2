@@ -9,10 +9,10 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
     private Canvas canvas;
 
     @Override
-    public void receiveDrawing(DrawingInfo info) throws RemoteException {
+    public void receiveDrawing(DrawingInfo info, TextInfo textInfo) throws RemoteException {
 
         SwingUtilities.invokeLater(() -> {
-            canvas.ReceiveRemoteShape(info);
+            canvas.ReceiveRemoteShape(info, textInfo);
         });
     }
 

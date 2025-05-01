@@ -23,8 +23,6 @@ public class Server  {
         identity = Boolean.parseBoolean(args[0]);
         userName = args[1];
         boardName = args[2];
-        port = Integer.parseInt(args[3]);
-
 
         try {
             LocateRegistry.createRegistry(1099);

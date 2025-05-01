@@ -20,10 +20,10 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     }
 
     @Override
-    public void BroadcastDrawing(DrawingInfo info) throws RemoteException {
+    public void BroadcastDrawing(DrawingInfo info, TextInfo textInfo) throws RemoteException {
         for (UpdateHandler client : clients) {
             try {
-                client.receiveDrawing(info);
+                client.receiveDrawing(info, textInfo);
             } catch (RemoteException e) {
                 e.printStackTrace();
             } catch (RuntimeException e) {
@@ -34,9 +34,9 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     // after send drawings to server should send drawings to every client
     @Override
-    public void SendDrawings(DrawingInfo info) throws RemoteException {
-        canvas.SendRemoteShape(info);
-        BroadcastDrawing(info);
+    public void SendDrawings(DrawingInfo info, TextInfo textInfo) throws RemoteException {
+        canvas.SendRemoteShape(info, textInfo);
+        BroadcastDrawing(info, textInfo);
     }
 
     public void SetCanvas(Canvas canvas) {

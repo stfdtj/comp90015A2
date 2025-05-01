@@ -21,7 +21,7 @@ public enum DrawingMode implements Serializable {
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             Point last = canvas.getCurrentPoint();
             Point current = e.getPoint();
-            canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE);
+            canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE, null);
             canvas.setCurrentPoint(current);
         }
 
@@ -53,7 +53,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape(); // remove preview
-                canvas.AddShapeLocalRemote(start, end, DrawingMode.LINE);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.LINE, null);
                 start = null;
             }
         }
@@ -82,7 +82,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.AddShapeLocalRemote(start, end, DrawingMode.RECTANGLE);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.RECTANGLE, null);
                 start = null;
             }
         }
@@ -111,7 +111,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.AddShapeLocalRemote(start, end, DrawingMode.OVAL);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.OVAL, null);
                 start = null;
             }
         }
@@ -140,7 +140,7 @@ public enum DrawingMode implements Serializable {
             if (start != null) {
                 Point end = e.getPoint();
                 canvas.clearPreviewShape();
-                canvas.AddShapeLocalRemote(start, end, DrawingMode.TRIANGLE);
+                canvas.AddShapeLocalRemote(start, end, DrawingMode.TRIANGLE, null);
                 start = null;
             }
         }
@@ -185,7 +185,7 @@ public enum DrawingMode implements Serializable {
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             Point last = canvas.getCurrentPoint();
             Point current = e.getPoint();
-            canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE);
+            canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE, null);
             canvas.setCurrentPoint(current);
         }
 

@@ -5,8 +5,10 @@ package main;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /*
@@ -82,11 +84,29 @@ public class Main {
 
         frame.add(panel);
         frame.setVisible(true);
+        frame.setFocusable(false);
 
         // create new white board
         createBtn.addActionListener(e -> {
             // identity, username, boardname, port
-            Server.main(new String[]{"true", "triss", "board", "8080"});
+            // Server.main(new String[]{"true", "triss", "board", "8080"});
+            frame.setState(Frame.ICONIFIED);
+            // try to create a new process
+            String classpath = System.getProperty("java.class.path");
+            System.out.println(classpath);
+            String[] cmd = {
+                    "java", "-cp", classpath,
+                    "main.Server",
+                    "true", "triss", "board", "8080"
+            };
+            try {
+                Runtime.getRuntime().exec(cmd);
+                frame.setState(Frame.ICONIFIED);
+                frame.dispose();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
         });
 
 
@@ -94,6 +114,8 @@ public class Main {
         openBtn.addActionListener(e -> {
             System.out.println("Open selected");
             Server.main(new String[]{});
+            frame.setState(Frame.ICONIFIED);
+            frame.dispose();
         });
 
 
@@ -101,6 +123,10 @@ public class Main {
         joinBtn.addActionListener(e -> {
             // ip, port, username
             Client.main(new String[]{"192.168.0.24", "1099", "triss"});
+            frame.setState(Frame.ICONIFIED);
+            frame.dispose();
         });
+
+
     }
 }
