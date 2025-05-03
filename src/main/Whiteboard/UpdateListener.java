@@ -1,5 +1,8 @@
 package Whiteboard;
 
+import Whiteboard.Utility.DrawingInfo;
+import Whiteboard.Utility.TextInfo;
+
 import javax.swing.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

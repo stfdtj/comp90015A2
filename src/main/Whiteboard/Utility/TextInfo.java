@@ -1,5 +1,8 @@
-package Whiteboard;
+package Whiteboard.Utility;
 
+import Whiteboard.DrawingMode;
+
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.io.Serializable;
 

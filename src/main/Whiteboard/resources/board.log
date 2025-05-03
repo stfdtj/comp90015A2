@@ -1,31 +1,330 @@
-[ACTION] [2025-05-01 22:15:48] Creating WhiteboardGUI
-[ACTION] [2025-05-01 22:15:48] Binding Keys to Whiteboard
-[ACTION] [2025-05-01 22:15:48] Creating Canvas
-[ACTION] [2025-05-01 22:15:48] Binding Keys to Canvas
-[ACTION] [2025-05-01 22:15:50] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:15:50] Set drawing mode: TEXT
-[ACTION] [2025-05-01 22:15:50] Set color: java.awt.Color[r=0,g=0,b=0]
-[INFO] [2025-05-01 22:15:53] Removed TextBox
-[INFO] [2025-05-01 22:15:53] false
-[ACTION] [2025-05-01 22:16:23] Set drawing mode: FREE
-[ACTION] [2025-05-01 22:16:23] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:16:54] Creating WhiteboardGUI
-[ACTION] [2025-05-01 22:16:54] Binding Keys to Whiteboard
-[ACTION] [2025-05-01 22:16:54] Creating Canvas
-[ACTION] [2025-05-01 22:16:54] Binding Keys to Canvas
-[ACTION] [2025-05-01 22:16:56] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:16:56] Set drawing mode: TEXT
-[ACTION] [2025-05-01 22:16:56] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:17:17] Creating WhiteboardGUI
-[ACTION] [2025-05-01 22:17:17] Binding Keys to Whiteboard
-[ACTION] [2025-05-01 22:17:17] Creating Canvas
-[ACTION] [2025-05-01 22:17:17] Binding Keys to Canvas
-[ACTION] [2025-05-01 22:17:18] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:17:18] Set drawing mode: TEXT
-[ACTION] [2025-05-01 22:17:18] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:19:31] Creating WhiteboardGUI
-[ACTION] [2025-05-01 22:19:31] Binding Keys to Whiteboard
-[ACTION] [2025-05-01 22:19:31] Creating Canvas
-[ACTION] [2025-05-01 22:19:32] Set color: java.awt.Color[r=0,g=0,b=0]
-[ACTION] [2025-05-01 22:19:32] Set drawing mode: TEXT
-[ACTION] [2025-05-01 22:19:32] Set color: java.awt.Color[r=0,g=0,b=0]
+[INFO] [2025-05-03 15:50:51] Try creating registry
+[INFO] [2025-05-03 15:50:51] Server started
+[INFO] [2025-05-03 15:50:51] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:50:51] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:50:51] Creating Canvas
+[ACTION] [2025-05-03 15:50:51] Binding Keys to canvas
+[ACTION] [2025-05-03 15:51:02] Set drawing mode: LINE
+[INFO] [2025-05-03 15:51:34] Try creating registry
+[INFO] [2025-05-03 15:51:34] Server started
+[INFO] [2025-05-03 15:51:34] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:51:34] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:51:34] Creating Canvas
+[ACTION] [2025-05-03 15:51:34] Binding Keys to canvas
+[ACTION] [2025-05-03 15:51:38] Set drawing mode: ERASER
+[ACTION] [2025-05-03 15:51:45] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 15:51:49] Set color: java.awt.Color[r=255,g=255,b=255]
+[ACTION] [2025-05-03 15:51:51] Set color: java.awt.Color[r=0,g=0,b=0]
+[INFO] [2025-05-03 15:52:04] Try creating registry
+[INFO] [2025-05-03 15:52:04] Server started
+[INFO] [2025-05-03 15:52:04] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:52:04] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:52:04] Creating Canvas
+[ACTION] [2025-05-03 15:52:04] Binding Keys to canvas
+[ACTION] [2025-05-03 15:52:07] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 15:52:26] Try creating registry
+[INFO] [2025-05-03 15:52:26] Server started
+[INFO] [2025-05-03 15:52:26] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:52:26] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:52:26] Creating Canvas
+[ACTION] [2025-05-03 15:52:26] Binding Keys to canvas
+[ACTION] [2025-05-03 15:52:29] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 15:52:32] Set color: java.awt.Color[r=0,g=255,b=0]
+[ACTION] [2025-05-03 15:52:33] Set drawing mode: ERASER
+[ACTION] [2025-05-03 15:52:40] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 15:53:31] Try creating registry
+[INFO] [2025-05-03 15:53:31] Server started
+[INFO] [2025-05-03 15:53:31] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:53:31] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:53:31] Creating Canvas
+[ACTION] [2025-05-03 15:53:31] Binding Keys to canvas
+[ACTION] [2025-05-03 15:53:36] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:53:36] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 15:53:39] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:53:39] Set drawing mode: OVAL
+[ACTION] [2025-05-03 15:53:43] Set color: java.awt.Color[r=255,g=0,b=0]
+[ACTION] [2025-05-03 15:53:45] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:53:45] Set drawing mode: TRIANGLE
+[ACTION] [2025-05-03 15:53:46] Set color: java.awt.Color[r=255,g=255,b=0]
+[ACTION] [2025-05-03 15:53:52] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:53:52] Set drawing mode: LINE
+[ACTION] [2025-05-03 15:53:53] Set color: java.awt.Color[r=0,g=255,b=255]
+[ACTION] [2025-05-03 15:53:56] Set drawing mode: ERASER
+[ACTION] [2025-05-03 15:54:03] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:54:03] Set drawing mode: FREE
+[ACTION] [2025-05-03 15:54:03] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:54:06] Set drawing mode: ERASER
+[ACTION] [2025-05-03 15:54:12] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:54:12] Set drawing mode: TRIANGLE
+[INFO] [2025-05-03 15:56:45] Try creating registry
+[INFO] [2025-05-03 15:56:45] Server started
+[INFO] [2025-05-03 15:56:45] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:56:45] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:56:45] Creating Canvas
+[ACTION] [2025-05-03 15:56:45] Binding Keys to canvas
+[ACTION] [2025-05-03 15:56:52] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:56:52] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 15:59:05] Try creating registry
+[INFO] [2025-05-03 15:59:05] Server started
+[INFO] [2025-05-03 15:59:05] Server started on 192.168.0.24
+[ACTION] [2025-05-03 15:59:05] Creating WhiteboardGUI
+[ACTION] [2025-05-03 15:59:06] Creating Canvas
+[ACTION] [2025-05-03 15:59:06] Binding Keys to canvas
+[ACTION] [2025-05-03 15:59:08] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 15:59:08] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:00:23] Try creating registry
+[INFO] [2025-05-03 16:00:23] Server started
+[INFO] [2025-05-03 16:00:23] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:00:23] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:00:23] Creating Canvas
+[ACTION] [2025-05-03 16:00:23] Binding Keys to canvas
+[ACTION] [2025-05-03 16:00:25] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:00:25] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:01:32] Try creating registry
+[INFO] [2025-05-03 16:01:32] Server started
+[INFO] [2025-05-03 16:01:32] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:01:33] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:01:33] Creating Canvas
+[ACTION] [2025-05-03 16:01:33] Binding Keys to canvas
+[ACTION] [2025-05-03 16:01:35] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:01:35] Set drawing mode: OVAL
+[ACTION] [2025-05-03 16:01:37] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:01:37] Set drawing mode: TRIANGLE
+[INFO] [2025-05-03 16:10:58] Try creating registry
+[INFO] [2025-05-03 16:10:59] Server started
+[INFO] [2025-05-03 16:10:59] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:10:59] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:10:59] Creating Canvas
+[ACTION] [2025-05-03 16:10:59] Binding Keys to canvas
+[ACTION] [2025-05-03 16:11:02] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:11:02] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:14:59] Try creating registry
+[INFO] [2025-05-03 16:14:59] Server started
+[INFO] [2025-05-03 16:14:59] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:14:59] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:14:59] Creating Canvas
+[ACTION] [2025-05-03 16:14:59] Binding Keys to canvas
+[ACTION] [2025-05-03 16:15:02] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:15:02] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:15:55] Try creating registry
+[INFO] [2025-05-03 16:15:55] Server started
+[INFO] [2025-05-03 16:15:55] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:15:55] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:15:55] Creating Canvas
+[ACTION] [2025-05-03 16:15:55] Binding Keys to canvas
+[ACTION] [2025-05-03 16:15:58] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:15:58] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:18:18] Try creating registry
+[INFO] [2025-05-03 16:18:18] Server started
+[INFO] [2025-05-03 16:18:18] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:18:19] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:18:19] Creating Canvas
+[ACTION] [2025-05-03 16:18:19] Binding Keys to canvas
+[ACTION] [2025-05-03 16:18:22] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:18:22] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:18:43] Try creating registry
+[INFO] [2025-05-03 16:18:43] Server started
+[INFO] [2025-05-03 16:18:43] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:18:43] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:18:43] Creating Canvas
+[ACTION] [2025-05-03 16:18:43] Binding Keys to canvas
+[INFO] [2025-05-03 16:19:39] Try creating registry
+[INFO] [2025-05-03 16:19:39] Server started
+[INFO] [2025-05-03 16:19:39] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:19:39] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:19:39] Creating Canvas
+[ACTION] [2025-05-03 16:19:39] Binding Keys to canvas
+[INFO] [2025-05-03 16:30:07] Try creating registry
+[INFO] [2025-05-03 16:30:07] Server started
+[INFO] [2025-05-03 16:30:07] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:30:07] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:30:07] Creating Canvas
+[ACTION] [2025-05-03 16:30:07] Binding Keys to canvas
+[ACTION] [2025-05-03 16:30:26] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:30:26] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:30:30] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:30:30] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:30:42] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:30:42] Set drawing mode: FREE
+[INFO] [2025-05-03 16:31:58] Try creating registry
+[INFO] [2025-05-03 16:31:58] Server started
+[INFO] [2025-05-03 16:31:58] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:31:58] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:31:58] Creating Canvas
+[ACTION] [2025-05-03 16:31:59] Binding Keys to canvas
+[INFO] [2025-05-03 16:32:34] Try creating registry
+[INFO] [2025-05-03 16:32:35] Server started
+[INFO] [2025-05-03 16:32:35] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:32:35] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:32:35] Creating Canvas
+[ACTION] [2025-05-03 16:32:35] Binding Keys to canvas
+[INFO] [2025-05-03 16:32:53] Try creating registry
+[INFO] [2025-05-03 16:32:53] Server started
+[INFO] [2025-05-03 16:32:53] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:32:53] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:32:53] Creating Canvas
+[ACTION] [2025-05-03 16:32:53] Binding Keys to canvas
+[INFO] [2025-05-03 16:34:23] Try creating registry
+[INFO] [2025-05-03 16:34:23] Server started
+[INFO] [2025-05-03 16:34:23] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:34:23] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:34:23] Creating Canvas
+[ACTION] [2025-05-03 16:34:23] Binding Keys to canvas
+[INFO] [2025-05-03 16:34:43] Try creating registry
+[INFO] [2025-05-03 16:34:43] Server started
+[INFO] [2025-05-03 16:34:43] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:34:43] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:34:43] Creating Canvas
+[ACTION] [2025-05-03 16:34:43] Binding Keys to canvas
+[INFO] [2025-05-03 16:35:03] Try creating registry
+[INFO] [2025-05-03 16:35:03] Server started
+[INFO] [2025-05-03 16:35:03] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:35:03] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:35:03] Creating Canvas
+[ACTION] [2025-05-03 16:35:03] Binding Keys to canvas
+[INFO] [2025-05-03 16:35:35] Try creating registry
+[INFO] [2025-05-03 16:35:35] Server started
+[INFO] [2025-05-03 16:35:35] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:35:35] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:35:35] Creating Canvas
+[ACTION] [2025-05-03 16:35:35] Binding Keys to canvas
+[INFO] [2025-05-03 16:35:54] Try creating registry
+[INFO] [2025-05-03 16:35:54] Server started
+[INFO] [2025-05-03 16:35:54] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:35:54] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:35:54] Creating Canvas
+[ACTION] [2025-05-03 16:35:54] Binding Keys to canvas
+[INFO] [2025-05-03 16:36:45] Try creating registry
+[INFO] [2025-05-03 16:36:45] Server started
+[INFO] [2025-05-03 16:36:45] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:36:46] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:36:46] Creating Canvas
+[ACTION] [2025-05-03 16:36:46] Binding Keys to canvas
+[INFO] [2025-05-03 16:42:34] Try creating registry
+[INFO] [2025-05-03 16:42:34] Server started
+[INFO] [2025-05-03 16:42:34] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:42:35] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:42:35] Creating Canvas
+[ACTION] [2025-05-03 16:42:35] Binding Keys to canvas
+[ACTION] [2025-05-03 16:42:38] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:42:38] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:42:57] Try creating registry
+[INFO] [2025-05-03 16:42:57] Server started
+[INFO] [2025-05-03 16:42:57] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:42:57] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:42:57] Creating Canvas
+[ACTION] [2025-05-03 16:42:57] Binding Keys to canvas
+[ACTION] [2025-05-03 16:43:01] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:43:01] Set drawing mode: TRIANGLE
+[INFO] [2025-05-03 16:43:14] Try creating registry
+[INFO] [2025-05-03 16:43:14] Server started
+[INFO] [2025-05-03 16:43:14] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:43:14] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:43:14] Creating Canvas
+[ACTION] [2025-05-03 16:43:14] Binding Keys to canvas
+[ACTION] [2025-05-03 16:43:17] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:43:17] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:43:50] Try creating registry
+[INFO] [2025-05-03 16:43:50] Server started
+[INFO] [2025-05-03 16:43:50] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:43:50] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:43:50] Creating Canvas
+[ACTION] [2025-05-03 16:43:50] Binding Keys to canvas
+[ACTION] [2025-05-03 16:43:53] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:43:53] Set drawing mode: RECTANGLE
+[INFO] [2025-05-03 16:46:49] Try creating registry
+[INFO] [2025-05-03 16:46:49] Server started
+[INFO] [2025-05-03 16:46:49] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:46:49] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:46:49] Creating Canvas
+[ACTION] [2025-05-03 16:46:49] Binding Keys to canvas
+[ACTION] [2025-05-03 16:46:51] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:46:51] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:46:55] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:46:55] Set drawing mode: OVAL
+[ACTION] [2025-05-03 16:46:55] Set color: java.awt.Color[r=0,g=255,b=0]
+[ACTION] [2025-05-03 16:47:00] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:47:00] Set drawing mode: TRIANGLE
+[ACTION] [2025-05-03 16:47:01] Set color: java.awt.Color[r=0,g=0,b=255]
+[ACTION] [2025-05-03 16:47:06] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:47:06] Set drawing mode: FREE
+[ACTION] [2025-05-03 16:47:06] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:47:16] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:47:16] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:47:20] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:47:20] Set drawing mode: FREE
+[INFO] [2025-05-03 16:48:42] Try creating registry
+[INFO] [2025-05-03 16:48:42] Server started
+[INFO] [2025-05-03 16:48:42] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:48:42] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:48:42] Creating Canvas
+[ACTION] [2025-05-03 16:48:42] Binding Keys to canvas
+[INFO] [2025-05-03 16:50:12] Try creating registry
+[INFO] [2025-05-03 16:50:13] Server started
+[INFO] [2025-05-03 16:50:13] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:50:13] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:50:13] Creating Canvas
+[ACTION] [2025-05-03 16:50:13] Binding Keys to canvas
+[ACTION] [2025-05-03 16:50:17] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:50:17] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:50:21] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:50:21] Set drawing mode: FREE
+[INFO] [2025-05-03 16:51:12] Try creating registry
+[INFO] [2025-05-03 16:51:12] Server started
+[INFO] [2025-05-03 16:51:12] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:51:12] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:51:12] Creating Canvas
+[ACTION] [2025-05-03 16:51:12] Binding Keys to canvas
+[ACTION] [2025-05-03 16:51:15] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:51:15] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:51:18] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:51:18] Set drawing mode: FREE
+[INFO] [2025-05-03 16:52:32] Try creating registry
+[INFO] [2025-05-03 16:52:32] Server started
+[INFO] [2025-05-03 16:52:32] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:52:32] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:52:32] Creating Canvas
+[ACTION] [2025-05-03 16:52:32] Binding Keys to canvas
+[ACTION] [2025-05-03 16:52:35] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:52:35] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:52:38] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:52:38] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:52:39] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:52:39] Set drawing mode: FREE
+[ACTION] [2025-05-03 16:52:39] Set color: java.awt.Color[r=0,g=0,b=0]
+[INFO] [2025-05-03 16:55:12] Try creating registry
+[INFO] [2025-05-03 16:55:12] Server started
+[INFO] [2025-05-03 16:55:12] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:55:12] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:55:12] Creating Canvas
+[ACTION] [2025-05-03 16:55:12] Binding Keys to canvas
+[ACTION] [2025-05-03 16:55:18] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:18] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:55:20] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:20] Set drawing mode: OVAL
+[ACTION] [2025-05-03 16:55:21] Set color: java.awt.Color[r=255,g=0,b=0]
+[ACTION] [2025-05-03 16:55:27] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:27] Set drawing mode: TRIANGLE
+[ACTION] [2025-05-03 16:55:28] Set color: java.awt.Color[r=255,g=255,b=0]
+[ACTION] [2025-05-03 16:55:35] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:35] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:55:36] Set color: java.awt.Color[r=0,g=255,b=255]
+[ACTION] [2025-05-03 16:55:44] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:44] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:55:47] Set color: java.awt.Color[r=0,g=255,b=255]
+[ACTION] [2025-05-03 16:55:50] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:55:50] Set drawing mode: LINE
+[ACTION] [2025-05-03 16:55:52] Set color: java.awt.Color[r=255,g=0,b=255]
+[INFO] [2025-05-03 16:56:32] Try creating registry
+[INFO] [2025-05-03 16:56:32] Server started
+[INFO] [2025-05-03 16:56:32] Server started on 192.168.0.24
+[ACTION] [2025-05-03 16:56:32] Creating WhiteboardGUI
+[ACTION] [2025-05-03 16:56:32] Creating Canvas
+[ACTION] [2025-05-03 16:56:32] Binding Keys to canvas
+[ACTION] [2025-05-03 16:56:33] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:56:33] Set drawing mode: FREE
+[ACTION] [2025-05-03 16:56:33] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:56:36] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:56:36] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-03 16:56:39] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-03 16:56:39] Set drawing mode: LINE

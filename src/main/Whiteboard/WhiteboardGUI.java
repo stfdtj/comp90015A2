@@ -1,5 +1,8 @@
 package Whiteboard;
 
+import Whiteboard.Utility.KeyBindingManager;
+import Whiteboard.Utility.Log;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -32,9 +35,6 @@ public class WhiteboardGUI extends JFrame {
             e.printStackTrace();
         }
 
-        // key binding
-        KeyBindingManager.bindKeysToWhiteboard(this);
-        System.out.println(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow());
 
         JPanel titleBar = new JPanel();
         titleBar.setBackground(new Color(255, 245, 190));
@@ -62,6 +62,8 @@ public class WhiteboardGUI extends JFrame {
 
         Log.action("Creating Canvas");
         canvas = new Canvas(remoteService, identity, userName);
+        JScrollPane canvasScroller = new JScrollPane(canvas);
+        add(canvasScroller, BorderLayout.CENTER);
 
 
 

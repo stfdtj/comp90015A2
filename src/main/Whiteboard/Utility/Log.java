@@ -1,4 +1,4 @@
-package Whiteboard;
+package Whiteboard.Utility;
 
 import java.io.FileWriter;
 import java.io.IOException;

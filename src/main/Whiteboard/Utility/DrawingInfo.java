@@ -1,4 +1,6 @@
-package Whiteboard;
+package Whiteboard.Utility;
+
+import Whiteboard.DrawingMode;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -9,6 +11,7 @@ public class DrawingInfo implements Serializable {
     private final Color color;
     private final DrawingMode drawingMode;
     private final float thickness;
+
 
     public DrawingInfo(Point start, Point end, Color color, DrawingMode dm, float thickness) {
         this.start = start;

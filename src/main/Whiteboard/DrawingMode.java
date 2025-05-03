@@ -13,14 +13,16 @@ public enum DrawingMode implements Serializable {
 
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
-            canvas.setCurrentPoint(e.getPoint());
+            // if (!SwingUtilities.isLeftMouseButton(e)) return;
+            Point point = new Point(e.getX()-canvas.offsetX, e.getY()-canvas.offsetY);
+            canvas.setCurrentPoint(point);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             Point last = canvas.getCurrentPoint();
             Point current = e.getPoint();
+            current = new Point(current.x-canvas.offsetX, current.y-canvas.offsetY);
             canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE, null);
             canvas.setCurrentPoint(current);
         }
@@ -35,14 +37,16 @@ public enum DrawingMode implements Serializable {
 
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            //if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
+            start = new Point(start.x-canvas.offsetX, start.y-canvas.offsetY);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 Line2D tempLine = new Line2D.Float(start, end);
                 canvas.setPreviewShape(tempLine);
             }
@@ -52,6 +56,7 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape(); // remove preview
                 canvas.AddShapeLocalRemote(start, end, DrawingMode.LINE, null);
                 start = null;
@@ -62,14 +67,16 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            //if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
+            start = new Point(start.x-canvas.offsetX, start.y-canvas.offsetY);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 double height = Math.abs(start.getY() - end.getY());
                 double width = Math.abs(start.getX() - end.getX());
                 Rectangle2D rect = new Rectangle2D.Double(start.x, start.y, width, height);
@@ -81,6 +88,7 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape();
                 canvas.AddShapeLocalRemote(start, end, DrawingMode.RECTANGLE, null);
                 start = null;
@@ -91,14 +99,16 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            //if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
+            start = new Point(start.x-canvas.offsetX, start.y-canvas.offsetY);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 double height = Math.abs(start.getY() - end.getY());
                 double width = Math.abs(start.getX() - end.getX());
                 Ellipse2D oval = new Ellipse2D.Double(start.x, start.y, width, height);
@@ -110,6 +120,7 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape();
                 canvas.AddShapeLocalRemote(start, end, DrawingMode.OVAL, null);
                 start = null;
@@ -120,14 +131,16 @@ public enum DrawingMode implements Serializable {
         Point start = null;
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
+            //if (!SwingUtilities.isLeftMouseButton(e)) return;
             start = e.getPoint();
+            start = new Point(start.x-canvas.offsetX, start.y-canvas.offsetY);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 int[] xPoints = {start.x, end.x, (start.x + end.x) / 2};
                 int[] yPoints = {end.y, end.y, start.y};
                 Polygon triangle = new Polygon(xPoints, yPoints, 3);
@@ -139,6 +152,7 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape();
                 canvas.AddShapeLocalRemote(start, end, DrawingMode.TRIANGLE, null);
                 start = null;
@@ -151,6 +165,7 @@ public enum DrawingMode implements Serializable {
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
             start = e.getPoint();
+            start = new Point(start.x-canvas.offsetX, start.y-canvas.offsetY);
         }
 
         @Override
@@ -158,6 +173,7 @@ public enum DrawingMode implements Serializable {
             // set preview?
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 double height = Math.abs(start.getY() - end.getY());
                 double width = Math.abs(start.getX() - end.getX());
                 Rectangle2D rect = new Rectangle2D.Double(start.x, start.y, width, height);
@@ -169,22 +185,28 @@ public enum DrawingMode implements Serializable {
         public void mouseReleased(MouseEvent e, Canvas canvas) {
             if (start != null) {
                 Point end = e.getPoint();
+                end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape();
-                canvas.AddTextBox(start, end);
+                if (canvas.scroll == null) {
+                    canvas.AddTextBox(start, end);
+                }
+
             }
         }
     },
     ERASER{
         @Override
         public void mousePressed(MouseEvent e, Canvas canvas) {
-            if (!SwingUtilities.isLeftMouseButton(e)) return;
-            canvas.setCurrentPoint(e.getPoint());
+            //if (!SwingUtilities.isLeftMouseButton(e)) return;
+            Point point = new Point(e.getX()-canvas.offsetX, e.getY()-canvas.offsetY);
+            canvas.setCurrentPoint(point);
         }
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
             Point last = canvas.getCurrentPoint();
             Point current = e.getPoint();
+            current = new Point(current.x-canvas.offsetX, current.y-canvas.offsetY);
             canvas.AddShapeLocalRemote(last, current, DrawingMode.FREE, null);
             canvas.setCurrentPoint(current);
         }
