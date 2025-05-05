@@ -189,7 +189,7 @@ public enum DrawingMode implements Serializable {
                 Point end = e.getPoint();
                 end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);
                 canvas.clearPreviewShape();
-                if (canvas.scroll == null) {
+                if (canvas.getScroll() == null) {
                     canvas.AddTextBox(start, end);
                 }
 

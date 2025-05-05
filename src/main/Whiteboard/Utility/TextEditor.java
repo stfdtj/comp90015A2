@@ -37,12 +37,12 @@ public class TextEditor {
 
 
     public JScrollPane CreateTextBox(Point start, Point end) {
+        Log.info("Creating TextBox");
         textPane = new JTextArea();
         int height = (int) Math.abs(start.getY() - end.getY());
         int width = (int) Math.abs(start.getX() - end.getX());
         textPane.setPreferredSize(new Dimension(width, height));
         textPane.setText("Type something...");
-        textPane.setBackground(Color.RED);
 
         scroll = new JScrollPane(textPane);
         scroll.setBounds(start.x, start.y, width, height);
@@ -87,6 +87,11 @@ public class TextEditor {
 
     public TextInfo PackCurrInfo() {
         return new TextInfo(currentText, color, DrawingMode.TEXT, size, bold, italic, underline, font, location);
+    }
+
+    public void CleanTextBox() {
+        this.textPane = null;
+        this.scroll = null;
     }
 
     public JToolBar CreateTextFormatBar() {
