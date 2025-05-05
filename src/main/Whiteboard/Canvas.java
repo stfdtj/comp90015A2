@@ -1,8 +1,6 @@
 package Whiteboard;
 
 import Whiteboard.Utility.*;
-import org.w3c.dom.Text;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -47,12 +45,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private static Rectangle textBoxLocation;
 
 
-
-
-
-    //private final JLabel cursorLabel;
     private Point cursorPt = null;
-    Dimension cursorLabelSize;
 
     JButton curr;
     private JScrollPane scroll;
@@ -79,15 +72,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         KeyBindingManager.bindKeysToCanvas(this);
 
 
-        // draw username under cursor
-        //cursorLabel = new JLabel(username);
-        //cursorLabel.setSize(cursorLabel.getPreferredSize());
-        //cursorLabelSize = cursorLabel.getPreferredSize();
         this.setLayout(null);
-        //this.add(cursorLabel);
 
-
-        // this.add(textEditor.CreateTextFormatBar());
         repaint();
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -212,20 +198,17 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         g2.translate(offsetX, offsetY);
 
         if (cursorPt != null) {
-            String user = username;         // wherever you store it
+            String user = username;
             FontMetrics fm = g2.getFontMetrics();
             int textW = fm.stringWidth(user);
             int textH = fm.getHeight();
 
-            // offset so your label doesn’t cover the cursor tip
             int x = cursorPt.x + 12;
             int y = cursorPt.y + 16;
 
-            // optional: draw a semi-transparent box behind the text
-            g2.setColor(new Color(0,0,0, 80));     // black @ 30% alpha
+            g2.setColor(new Color(0,0,0, 80));
             g2.fillRoundRect(x-4, y - textH + 2, textW+8, textH+4, 6,6);
 
-            // then draw the username
             g2.setColor(Color.WHITE);
             g2.drawString(user, x, y);
         }
@@ -247,13 +230,22 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
             g2.setColor(info.getColor());
             g2.setFont(info.getFont());
-            g2.drawString(info.getText(),info.getLocation().x, info.getLocation().y);
+            // preserve new line
+            FontMetrics fm = g2.getFontMetrics();
+            int lineHeight = fm.getHeight();
+            String[] lines = info.getText().split("\n");
+            int x = info.getLocation().x;
+            int y = info.getLocation().y + fm.getAscent();
+
+            for (String line : lines) {
+                g2.drawString(line, x, y);
+                y += lineHeight;
+            }
         }
 
         if (previewShape != null) {
             g2.setColor(currColor);
             g2.setStroke(new BasicStroke(thickness));
-            Log.info("preview: "+previewShape.toString());
             g2.draw(previewShape);
         }
         g2.dispose();
@@ -382,10 +374,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     }
     @Override public void mouseEntered(MouseEvent e) {
-        //cursorLabel.setVisible(true);
     }
     @Override public void mouseExited(MouseEvent e) {
-        //cursorLabel.setVisible(false);
     }
     @Override public void mouseMoved(MouseEvent e) {
         cursorPt = new Point(e.getX() - offsetX, e.getY() - offsetY);

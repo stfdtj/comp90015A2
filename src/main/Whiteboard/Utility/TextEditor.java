@@ -110,6 +110,8 @@ public class TextEditor {
             this.font = new Font((String)fontFamilyCombo.getSelectedItem(), Font.PLAIN,
                     (Integer)fontSizeCombo.getSelectedItem());
             if (textPane != null) {
+                this.font = new Font((String)fontFamilyCombo.getSelectedItem(), Font.PLAIN,
+                        (int) size);
                 textPane.setFont(font);
             }
         });
@@ -122,7 +124,9 @@ public class TextEditor {
         fontSizeCombo.addActionListener(e -> {
             this.size = ((Integer)fontSizeCombo.getSelectedItem());
             if (textPane != null) {
-                textPane.setFont(textPane.getFont().deriveFont(size));
+                this.font = new Font(this.font.getFontName(), Font.PLAIN,
+                        (int) size);
+                textPane.setFont(font);
 
             }
         });
@@ -136,10 +140,13 @@ public class TextEditor {
             if (textPane != null) {
                 if (bold) {
                     bold = false;
-                    textPane.getFont().deriveFont(Font.PLAIN);
+                    this.font = new Font(this.font.getFontName(), Font.PLAIN,
+                            (int) size);
+                    textPane.setFont(font);
                 } else {
                     bold = true;
-                    textPane.getFont().deriveFont(Font.BOLD);
+                    this.font = new Font(this.font.getFontName(), Font.BOLD, (int) size);
+                    textPane.setFont(font);
                 }
             }
         });
@@ -152,11 +159,12 @@ public class TextEditor {
             if (textPane != null) {
                 if (italic) {
                     italic = false;
-                    textPane.getFont().deriveFont(Font.PLAIN);
+                    this.font = new Font(this.font.getFontName(), Font.PLAIN, (int) size);
+                    textPane.setFont(font);
                 } else {
                     italic = true;
-                    textPane.getFont().deriveFont(Font.ITALIC);
-
+                    this.font = new Font(this.font.getFontName(), Font.ITALIC, (int) size);
+                    textPane.setFont(font);
                 }
             }
         });
