@@ -19,7 +19,6 @@ public class TextEditor {
     private boolean italic = false;
     private boolean underline = false;
     private Font font = new Font("Arial", Font.PLAIN, 12);
-    private boolean isEditing = false;
     private Point location;
     private JTextArea textPane;
     private JScrollPane scroll;
@@ -43,15 +42,16 @@ public class TextEditor {
         int width = (int) Math.abs(start.getX() - end.getX());
         textPane.setPreferredSize(new Dimension(width, height));
         textPane.setText("Type something...");
+        textPane.setBackground(Color.RED);
 
         scroll = new JScrollPane(textPane);
         scroll.setBounds(start.x, start.y, width, height);
 
-        scroll.setVisible(true);
+        //Log.info("x: "+scroll.getBounds().x + "y: "+scroll.getBounds().y);
 
-        textPane.requestFocusInWindow();
+        // textPane.requestFocusInWindow();
 
-        isEditing = true;
+
         location = start;
 
         textPane.getInputMap(JComponent.WHEN_FOCUSED)
@@ -63,6 +63,7 @@ public class TextEditor {
                 canvas.RemoveTextBox();
             }
         });
+
         return scroll;
     }
 
@@ -70,7 +71,7 @@ public class TextEditor {
         currentText = textPane.getText();
         scroll.setVisible(false);
         textPane.setVisible(false);
-        isEditing = false;
+
     }
 
 

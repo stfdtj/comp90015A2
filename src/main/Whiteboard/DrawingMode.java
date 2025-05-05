@@ -1,5 +1,7 @@
 package Whiteboard;
 
+import Whiteboard.Utility.Log;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -170,7 +172,7 @@ public enum DrawingMode implements Serializable {
 
         @Override
         public void mouseDragged(MouseEvent e, Canvas canvas) {
-            // set preview?
+
             if (start != null) {
                 Point end = e.getPoint();
                 end = new Point(end.x-canvas.offsetX, end.y-canvas.offsetY);

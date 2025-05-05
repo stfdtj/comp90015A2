@@ -2,6 +2,7 @@ package Whiteboard;
 
 import Whiteboard.Utility.KeyBindingManager;
 import Whiteboard.Utility.Log;
+import Whiteboard.Utility.TextEditor;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -61,6 +62,7 @@ public class WhiteboardGUI extends JFrame {
         add(menuBar, BorderLayout.NORTH);
 
         Log.action("Creating Canvas");
+
         canvas = new Canvas(remoteService, identity, userName);
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
@@ -68,14 +70,17 @@ public class WhiteboardGUI extends JFrame {
 
 
         JPanel canvasContainer = new JPanel(new BorderLayout());
-        JPanel toolbarPanel = canvas.createToolbar();            // create toolbar
-        JPanel thicknessPanel = canvas.createThicknessPanel();   // create slider
+        JPanel toolbarPanel = canvas.createToolbar();
+        JPanel thicknessPanel = canvas.createThicknessPanel();
 
-        canvasContainer.add(toolbarPanel, BorderLayout.NORTH);   // toolbar
-        canvasContainer.add(thicknessPanel, BorderLayout.WEST);  // thickness
-        canvasContainer.add(canvas, BorderLayout.CENTER);        // canvas
+        canvasContainer.add(toolbarPanel, BorderLayout.NORTH);
+        canvasContainer.add(canvas.textEditor.CreateTextFormatBar(), BorderLayout.PAGE_END);
+        canvasContainer.add(thicknessPanel, BorderLayout.WEST);
+        canvasContainer.add(canvas, BorderLayout.CENTER);
+
 
         add(canvasContainer, BorderLayout.CENTER);
+
 
         setVisible(true);
         revalidate();

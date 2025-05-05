@@ -9,9 +9,6 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +44,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private Color currColor = Color.BLACK;
     private final Color backgroundColor = Color.WHITE;
     private float thickness = 3;
+    private Rectangle textBoxLocation;
+
 
 
 
 
     private final JLabel cursorLabel;
+    Dimension cursorLabelSize;
+
     JButton curr;
     JScrollPane scroll;
 
@@ -63,7 +64,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.remoteService = service;
         this.identity = identity;
         this.username = username;
+        this.setLayout(null);
 
+        // scale
         pencil = pencil.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         rubber = rubber.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         text = text.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
@@ -75,12 +78,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         KeyBindingManager.bindKeysToCanvas(this);
 
 
-
+        // draw username under cursor
         cursorLabel = new JLabel(username);
         cursorLabel.setSize(cursorLabel.getPreferredSize());
+        cursorLabelSize = cursorLabel.getPreferredSize();
         this.setLayout(null);
         this.add(cursorLabel);
-        this.add(textEditor.CreateTextFormatBar());
+
+
+        // this.add(textEditor.CreateTextFormatBar());
         repaint();
         this.setFocusable(true);
         this.requestFocusInWindow();
@@ -226,6 +232,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             g2.setStroke(new BasicStroke(thickness));
             g2.draw(previewShape);
         }
+//        if (scroll != null && textBoxLocation != null) {
+//            scroll.setBounds(
+//                    textBoxLocation.x + offsetX,
+//                    textBoxLocation.y + offsetY,
+//                    textBoxLocation.width,
+//                    textBoxLocation.height);
+//        }
+
+        //updateEditorPosition();
         // Toolkit.getDefaultToolkit().sync();
     }
 
@@ -256,6 +271,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             panStartX  = offsetX;
             panStartY  = offsetY;
         }
+        Point p = e.getPoint();
+        cursorLabel.setLocation(p.x - offsetX - cursorLabelSize.width/2,
+                p.y - offsetY + cursorLabelSize.height + 2);
+
+        repaint();
     }
 
     @Override
@@ -287,10 +307,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 setCanvasSize(canvasWidth, canvasHeight);
                 revalidate();
             }
+
         }
 
         Point p = e.getPoint();
-        cursorLabel.setLocation(p.x, p.y);
+        cursorLabel.setLocation(p.x - offsetX - cursorLabelSize.width/2,
+                p.y - offsetY + cursorLabelSize.height + 2);
+
         repaint();
     }
 
@@ -299,12 +322,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         if (SwingUtilities.isLeftMouseButton(e)) {
             mode.mouseReleased(e, this);
         } else if (SwingUtilities.isRightMouseButton(e)) {
-
+//            if (scroll != null) {
+//                scroll.setLocation(textBoxLocation.x + offsetX, textBoxLocation.y + offsetY);
+//            }
         }
 
         Point p = e.getPoint();
-        int offsetY = 8;
-        cursorLabel.setLocation(p.x, p.y + offsetY);
+        cursorLabel.setLocation(p.x - offsetX - cursorLabelSize.width/2,
+                p.y - offsetY + cursorLabelSize.height + 2);
         repaint();
     }
 
@@ -322,8 +347,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
     @Override public void mouseMoved(MouseEvent e) {
         Point p = e.getPoint();
-
-        cursorLabel.setLocation(p.x, p.y + offsetY);
+        cursorLabel.setLocation(p.x - offsetX - cursorLabelSize.width/2,
+                p.y - offsetY + cursorLabelSize.height + 2);
         repaint();
     }
 
@@ -528,8 +553,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     // add a text panel to canvas
     public void AddTextBox(Point start, Point end) {
+
         scroll = textEditor.CreateTextBox(start, end);
+        Dimension d = new Dimension(scroll.getPreferredSize().width, scroll.getPreferredSize().height);
+        textBoxLocation = new Rectangle(start, d);
+
         this.add(scroll);
+        scroll.setVisible(true);
         this.revalidate();
         this.repaint();
     }
@@ -538,6 +568,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         if (scroll != null) {
             this.remove(scroll);
             scroll = null;
+            textBoxLocation = null;
         }
 
         this.revalidate();
@@ -547,6 +578,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // Log.info("is canvas focused: "+ this.isFocusOwner());
         // Log.info("Removed TextBox");
     }
+
 
 
     public void Saving(){
