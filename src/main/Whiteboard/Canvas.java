@@ -1,8 +1,8 @@
 package Whiteboard;
 
 import Whiteboard.Utility.*;
+import org.w3c.dom.Text;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -577,6 +577,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         // Log.info("is canvas focused: "+ this.isFocusOwner());
         // Log.info("Removed TextBox");
+    }
+
+    public List<DrawingInfo> getDrawingInfo() {
+        return shapes;
+    }
+
+    public List<TextInfo> getTextInfo() {
+        return texts;
     }
 
 

@@ -19,6 +19,13 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     @Override
     public void RegisterClient(UpdateHandler client) throws RemoteException {
         clients.add(client);
+        for (DrawingInfo info: canvas.getDrawingInfo()) {
+            BroadcastDrawing(info);
+        }
+
+        for (TextInfo info: canvas.getTextInfo()) {
+            BroadCastText(info);
+        }
 
     }
 

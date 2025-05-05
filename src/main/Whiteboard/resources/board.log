@@ -16,3 +16,35 @@
 [ACTION] [2025-05-04 02:21:58] Set color: java.awt.Color[r=0,g=0,b=0]
 [ACTION] [2025-05-04 02:21:58] Set drawing mode: TEXT
 [ACTION] [2025-05-04 02:21:58] Set color: java.awt.Color[r=0,g=0,b=0]
+[INFO] [2025-05-05 12:35:38] Try creating registry
+[INFO] [2025-05-05 12:35:38] Server started
+[INFO] [2025-05-05 12:35:38] Server started on 10.13.102.240
+[ACTION] [2025-05-05 12:35:38] Creating WhiteboardGUI
+[ACTION] [2025-05-05 12:35:39] Creating Canvas
+[ACTION] [2025-05-05 12:35:39] Binding Keys to canvas
+[ACTION] [2025-05-05 12:35:46] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:35:46] Set drawing mode: RECTANGLE
+[ACTION] [2025-05-05 12:35:54] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:35:54] Set drawing mode: LINE
+[ACTION] [2025-05-05 12:36:51] Creating WhiteboardGUI
+[ACTION] [2025-05-05 12:36:51] Creating Canvas
+[ACTION] [2025-05-05 12:36:52] Binding Keys to canvas
+[ACTION] [2025-05-05 12:38:55] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:38:55] Set drawing mode: TEXT
+[ACTION] [2025-05-05 12:38:55] Set color: java.awt.Color[r=0,g=0,b=0]
+[INFO] [2025-05-05 12:54:44] Try creating registry
+[INFO] [2025-05-05 12:54:44] Server started
+[INFO] [2025-05-05 12:54:44] Server started on 10.13.102.240
+[ACTION] [2025-05-05 12:54:45] Creating WhiteboardGUI
+[ACTION] [2025-05-05 12:54:45] Creating Canvas
+[ACTION] [2025-05-05 12:54:45] Binding Keys to canvas
+[ACTION] [2025-05-05 12:54:48] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:54:48] Set drawing mode: FREE
+[ACTION] [2025-05-05 12:54:48] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:54:50] Set color: java.awt.Color[r=255,g=0,b=255]
+[ACTION] [2025-05-05 12:54:53] Set color: java.awt.Color[r=0,g=0,b=0]
+[ACTION] [2025-05-05 12:54:53] Set drawing mode: OVAL
+[ACTION] [2025-05-05 12:54:55] Set color: java.awt.Color[r=0,g=0,b=255]
+[ACTION] [2025-05-05 12:55:17] Creating WhiteboardGUI
+[ACTION] [2025-05-05 12:55:17] Creating Canvas
+[ACTION] [2025-05-05 12:55:17] Binding Keys to canvas
