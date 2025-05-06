@@ -15,6 +15,14 @@
         <javafx.version>21.0.2</javafx.version>
         <java.version>23</java.version>
     </properties>
+    <!-- https://mvnrepository.com/artifact/org.json/json -->
+    <dependencies>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20250107</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

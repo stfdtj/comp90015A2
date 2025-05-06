@@ -63,7 +63,7 @@ public class WhiteboardGUI extends JFrame {
 
         Log.action("Creating Canvas");
 
-        canvas = new Canvas(remoteService, identity, userName);
+        canvas = new Canvas(remoteService, identity, userName, boardName);
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
 

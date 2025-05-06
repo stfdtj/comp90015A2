@@ -25,6 +25,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private final boolean identity;
     private final String username;
+    private final String boardName;
     private JSlider slider;
     // should be saved
     private List<DrawingInfo> shapes = new ArrayList<>();
@@ -50,15 +51,19 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     JButton curr;
     private JScrollPane scroll;
 
+    private WhiteboardData data;
+
 
 
     private final WhiteboardFunctions remoteService;
 
-    public Canvas(WhiteboardFunctions service, boolean identity, String username) {
+    public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName) {
         this.remoteService = service;
         this.identity = identity;
         this.username = username;
+        this.boardName = boardName;
         this.setLayout(null);
+        data = new WhiteboardData();
 
         // scale
         pencil = pencil.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
@@ -371,7 +376,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
     @Override public void mouseClicked(MouseEvent e) {
-
     }
     @Override public void mouseEntered(MouseEvent e) {
     }
@@ -635,7 +639,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
     public void Saving(){
-
+        data.setOffSetX(offsetX);
+        data.setOffSetY(offsetY);
+        data.setCanvasHeight(canvasHeight);
+        data.setCanvasWidth(canvasWidth);
+        data.setBoardName(boardName);
+        data.SaveData();
     }
 
     public JScrollPane getScroll() {

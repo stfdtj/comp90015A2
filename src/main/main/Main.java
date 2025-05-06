@@ -45,8 +45,7 @@ public class Main {
         frame.setSize(400, 300);
         frame.setLocationRelativeTo(null);
 
-        try {
-            Image icon = ImageIO.read(new File("src/main/main/resources/whiteboard_icon.png"));
+        try {            Image icon = ImageIO.read(new File("src/main/main/resources/whiteboard_icon.png"));
             frame.setIconImage(icon);
         } catch (IOException e) {
             e.printStackTrace();
