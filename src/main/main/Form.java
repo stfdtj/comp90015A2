@@ -60,5 +60,9 @@ public class Form {
         dialog.setVisible(true);
         return result;
     }
+
+    public JDialog getDialog() {
+        return dialog;
+    }
 }
 

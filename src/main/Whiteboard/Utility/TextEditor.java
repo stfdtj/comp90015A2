@@ -47,9 +47,6 @@ public class TextEditor {
         scroll = new JScrollPane(textPane);
         scroll.setBounds(start.x, start.y, width, height);
 
-        //Log.info("x: "+scroll.getBounds().x + "y: "+scroll.getBounds().y);
-
-        // textPane.requestFocusInWindow();
 
 
         location = start;
@@ -86,7 +83,7 @@ public class TextEditor {
     }
 
     public TextInfo PackCurrInfo() {
-        return new TextInfo(currentText, color, DrawingMode.TEXT, size, bold, italic, underline, font, location);
+        return new TextInfo(currentText, color, DrawingMode.TEXT, size, bold, italic, font, location);
     }
 
     public void CleanTextBox() {

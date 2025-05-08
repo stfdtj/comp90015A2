@@ -2,12 +2,8 @@ package Whiteboard.Utility;
 
 import Whiteboard.DrawingMode;
 
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.io.Serializable;
-
-import static java.awt.AWTEventMulticaster.add;
-import static java.awt.AWTEventMulticaster.remove;
 
 public class TextInfo implements Serializable {
 
@@ -17,19 +13,17 @@ public class TextInfo implements Serializable {
     private float size;
     private boolean bold = false;
     private boolean italic = false;
-    private boolean underline = false;
     private Font font;
     private Point location;
 
     public TextInfo(String text, Color color, DrawingMode dm, float size, boolean bold, boolean italic,
-                    boolean underline, Font font, Point location) {
+                     Font font, Point location) {
         this.text = text;
         this.color = color;
         this.drawingMode = dm;
         this.size = size;
         this.bold = bold;
         this.italic = italic;
-        this.underline = underline;
         this.font = font;
         this.location = location;
     }
@@ -61,9 +55,6 @@ public class TextInfo implements Serializable {
         return italic;
     }
 
-    public boolean isUnderline() {
-        return underline;
-    }
     public Font getFont() {
         return font;
     }

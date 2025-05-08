@@ -7,6 +7,7 @@ import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private final boolean identity;
     private final String username;
-    private final String boardName;
+    private String boardName;
     private JSlider slider;
     // should be saved
     private List<DrawingInfo> shapes = new ArrayList<>();
@@ -51,26 +52,28 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     JButton curr;
     private JScrollPane scroll;
 
-    private WhiteboardData data;
+    private final WhiteboardData data;
 
 
 
     private final WhiteboardFunctions remoteService;
 
-    public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName) {
+    public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName, WhiteboardData saved) {
         this.remoteService = service;
         this.identity = identity;
         this.username = username;
         this.boardName = boardName;
         this.setLayout(null);
-        data = new WhiteboardData();
+        data = saved;
+        allocate();
+        repaint();
 
         // scale
         pencil = pencil.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         rubber = rubber.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
         text = text.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
 
-        setPreferredSize(new Dimension(1600, 900));
+        setPreferredSize(new Dimension(canvasWidth, canvasHeight));
         setBackground(backgroundColor);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -117,7 +120,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             info = new DrawingInfo(start, end, currColor, mode, thickness);
 
             shapes.add(info);
-            Log.info(info.toString());
+
             try {
                 if (identity) {
                     remoteService.BroadcastDrawing(info);
@@ -126,11 +129,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 }
 
             } catch (RemoteException ex) {
-                ex.printStackTrace();
+                Log.error(ex.toString());
             }
         } else {
             texts.add(textInfo);
-            Log.info(textInfo.toString());
+
             try {
                 if (identity) {
                     remoteService.BroadCastText(textInfo);
@@ -152,7 +155,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     // client receive drawing from server
     public synchronized void ReceiveRemoteShape(DrawingInfo info, TextInfo textInfo) {
-        // Log.action("Received remote shape: " + info.toString());
+
         try {
             if (info != null) {
                 shapes.add(info);
@@ -163,7 +166,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
             repaint();
         } catch (RuntimeException e) {
-            Log.error("Remote exception: " + e.toString());
+            Log.error("Remote exception: " + e);
             throw new RuntimeException(e);
         }
 
@@ -172,7 +175,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // send drawing to server
     public synchronized void SendRemoteShape(DrawingInfo info, TextInfo textInfo) {
         try {
-            // Log.action("Sent remote shape: " + info.toString());
+
             if (info != null) {
                 shapes.add(info);
             }
@@ -181,7 +184,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
             repaint();
         } catch (RuntimeException e) {
-            Log.error("Remote exception: " + e.toString());
+            Log.error("Remote exception: " + e);
             throw new RuntimeException(e);
         }
     }
@@ -276,7 +279,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // not left and right at same time to avoid issue
     @Override
     public void mousePressed(MouseEvent e) {
-
         Component hit = SwingUtilities.getDeepestComponentAt(this, e.getX(), e.getY());
         if (hit != this) {
             // click landed on a child (your scroll‐pane) → stop
@@ -356,12 +358,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         if (SwingUtilities.isLeftMouseButton(e)) {
             mode.mouseReleased(e, this);
-        } else if (SwingUtilities.isRightMouseButton(e)) {
-//            if (scroll != null) {
-//                scroll.setLocation(textBoxLocation.x + offsetX, textBoxLocation.y + offsetY);
-//            }
         }
-
         if (scroll != null && textBoxLocation != null) {
 
             Dimension d = scroll.getPreferredSize();
@@ -376,6 +373,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
     @Override public void mouseClicked(MouseEvent e) {
+
     }
     @Override public void mouseEntered(MouseEvent e) {
     }
@@ -401,7 +399,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             textEditor.textFormatBar.setVisible(false);
         }
 
-        Log.action("Set drawing mode: " + mode.toString());
+        Log.action("Set drawing mode: " + mode);
     }
 
     // set fore colour
@@ -592,7 +590,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 return new Line2D.Double(start, end);
             } else return null;
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            Log.error(e.getMessage());
             return null;
         }
 
@@ -624,8 +622,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.repaint();
         SwingUtilities.invokeLater(this::requestFocusInWindow);
 
-        // Log.info("is canvas focused: "+ this.isFocusOwner());
-        // Log.info("Removed TextBox");
     }
 
     public List<DrawingInfo> getDrawingInfo() {
@@ -638,17 +634,36 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
 
 
-    public void Saving(){
+    public void Saving(File path){
+        Log.info(offsetX+" "+offsetY+" "+canvasHeight+" "+canvasWidth+" "+boardName+" "+shapes.size()+" "+texts.size());
         data.setOffSetX(offsetX);
         data.setOffSetY(offsetY);
         data.setCanvasHeight(canvasHeight);
         data.setCanvasWidth(canvasWidth);
         data.setBoardName(boardName);
-        data.SaveData();
+        data.setDrawings(shapes);
+        data.setTexts(texts);
+        // check: should get file path here
+        data.SaveData(path);
     }
 
     public JScrollPane getScroll() {
         return scroll;
+    }
+
+    public void allocate() {
+        try {
+            boardName = data.getBoardName();
+            canvasHeight = data.getCanvasHeight();
+            canvasWidth = data.getCanvasWidth();
+            offsetX = data.getOffSetX();
+            offsetY = data.getOffSetY();
+            texts = data.getTexts();
+            shapes = data.getDrawings();
+        } catch (NullPointerException e) {
+            Log.info("This data is empty");
+        }
+
     }
 
 }

@@ -2,11 +2,15 @@ package main;
 
 
 
+import Whiteboard.Utility.Log;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /*
@@ -102,56 +106,13 @@ public class Main {
 
         // create new white board
         createBtn.addActionListener(e -> {
-            // identity, username, boardname, port
-            // Server.main(new String[]{"true", "triss", "board", "8080"});
-
-            String boardName = "blank";
-            String port = props.getProperty("rmi.port");
-            // dialog window
-            Form form = new Form(frame, "Create New Whiteboard");
-            JTextField board = new JTextField(25);
-            form = form.addRow("Enter board name:", board);
-            form = form.addButton("OK", JOptionPane.OK_OPTION);
-            int result = form.showDialog();
-            if (result == JOptionPane.OK_OPTION) {
-                if (!board.getText().equals("")) {
-                    boardName = board.getText();
-                }
-
-            }
-
-            String name = props.getProperty("user.name");
-//            new Thread(() -> {
-//                try {
-//                    main.Server.main(new String[]{"true", name, boardName, port});
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//            }).start();
-            // try to create a new process
-            String classpath = System.getProperty("java.class.path");
-            System.out.println(classpath);
-            String[] cmd = {
-                    "java", "-cp", classpath,
-                    "main.Server",
-                    "true", name, boardName, port
-            };
-            System.out.println("New process created");
-            try {
-                Runtime.getRuntime().exec(cmd);
-                frame.setState(Frame.ICONIFIED);
-                frame.dispose();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
-
+            CreateNewProgram(frame, props);
         });
 
 
         // open existing whiteboard
         openBtn.addActionListener(e -> {
-            Form form = new Form(frame, "dialog");
-            form.showDialog();
+            OpenNewProgram(frame, props);
         });
 
 
@@ -265,5 +226,94 @@ public class Main {
         button.setBackground(new Color(255,182,185,255));
         button.setForeground(Color.WHITE);
         button.setBorder(BorderFactory.createLineBorder(Color.WHITE, 2, true));
+    }
+
+    public static void CreateNewProgram(Frame frame, Properties props) {
+        // identity, username, boardname, port
+
+        String boardName = "blank";
+        String port = props.getProperty("rmi.port");
+        // dialog window
+        Form form = new Form(frame, "Create New Whiteboard");
+        JTextField board = new JTextField(25);
+        form = form.addRow("Enter board name:", board);
+        form = form.addButton("OK", JOptionPane.OK_OPTION);
+        int result = form.showDialog();
+        if (result == JOptionPane.OK_OPTION) {
+            if (!board.getText().equals("")) {
+                boardName = board.getText();
+            }
+
+        }
+
+        String name = props.getProperty("user.name");
+        // try to create a new process
+        String classpath = System.getProperty("java.class.path");
+        System.out.println(classpath);
+        String[] cmd = {
+                "java", "-cp", classpath,
+                "main.Server",
+                "true", name, boardName, port
+        };
+        System.out.println("cmd: " + Arrays.toString(cmd));
+        try {
+            Runtime.getRuntime().exec(cmd);
+            frame.setState(Frame.ICONIFIED);
+            frame.dispose();
+        } catch (IOException ex) {
+            Log.error(ex.getMessage());
+        }
+    }
+
+    public static String getPath() {
+        return path;
+    }
+
+    public static void OpenNewProgram(Frame frame, Properties props) {
+        File savedDir = new File("src/main/main/resources/SavedWhiteBoards");
+
+        String[] jsons = savedDir.isDirectory()
+                ? savedDir.list((d, n) -> n.toLowerCase().endsWith(".json"))
+                : null;
+        if (jsons == null || jsons.length == 0) {
+            JOptionPane.showMessageDialog(
+                    frame,
+                    "No saved whiteboards found.",
+                    "Open Whiteboard",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            return;
+        }
+
+        // file selector
+        JFileChooser chooser = new JFileChooser(savedDir);
+        chooser.setDialogTitle("Select a saved whiteboard");
+        chooser.setFileFilter(new FileNameExtensionFilter("Whiteboard JSON Files", "json"));
+        Log.info("Main: opened file chooser");
+        int result = chooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File chosen = chooser.getSelectedFile();
+            // get rid of .json
+            String fileName = chosen.getName();
+            String boardName = fileName.replaceFirst("\\.json$", "");
+            String name = props.getProperty("user.name");
+            // try to create a new process
+            String classpath = System.getProperty("java.class.path");
+            String port = props.getProperty("rmi.port");
+            String dataPath = chosen.getParentFile().getAbsolutePath() + "\\" + fileName;
+            String[] cmd = {
+                    "java", "-cp", classpath,
+                    "main.Server",
+                    "true", name, boardName, port, dataPath
+            };
+
+            try {
+                Runtime.getRuntime().exec(cmd);
+                frame.setState(Frame.ICONIFIED);
+                frame.dispose();
+            } catch (IOException ex) {
+                Log.error(ex.getMessage());
+            }
+        }
     }
 }
