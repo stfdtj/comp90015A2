@@ -1,6 +1,7 @@
 package Whiteboard;
 
 import Whiteboard.Utility.*;
+import main.Form;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -11,17 +12,24 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     private final ArrayList<UpdateHandler> clients = new ArrayList<>();
     private Canvas canvas;
+    private static WhiteboardGUI whiteboardGUI;
     private final ArrayList<RemoteUser> users = new ArrayList<>();
     private int numUsers = 0;
-    public ChatRoom chatRoom;
 
     public RemoteService() throws RemoteException {
-        chatRoom = new ChatRoom(users);
+
     }
 
     @Override
-    public void RegisterClient(UpdateHandler client) throws RemoteException {
-        clients.add(client);
+    public boolean RegisterClient(UpdateHandler client) throws RemoteException {
+        if (whiteboardGUI.NewJoinApplication()) {
+            clients.add(client);
+        } else {
+            RemoveLastUser();
+            client.NotifyRefuse();
+            return false;
+        }
+
 
         for (DrawingInfo info: canvas.getDrawingInfo()) {
             BroadcastDrawing(info);
@@ -30,11 +38,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         for (TextInfo info: canvas.getTextInfo()) {
             BroadCastText(info);
         }
-
-        for (String past : chatRoom.getMessages()) {
-            client.receiveMessage(past);
-        }
-
+        return true;
     }
 
 
@@ -112,7 +116,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     @Override
     public void BroadCastMessage(String m) throws RemoteException {
-        chatRoom.appendMessage(m);
         canvas.ReceiveMessage(m);
         for (UpdateHandler client : clients) {
             client.receiveMessage(m);
@@ -120,8 +123,15 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     }
 
     @Override
-    public ChatRoom GetChatRoom() throws RemoteException {
-        return chatRoom;
+    public void SetWhiteboardGUI(WhiteboardGUI gui) throws RemoteException {
+        this.whiteboardGUI = gui;
     }
+
+    @Override
+    public void RemoveLastUser() throws RemoteException {
+        users.remove(users.get(numUsers - 1));
+        numUsers--;
+    }
+
 
 }

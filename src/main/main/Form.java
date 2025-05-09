@@ -61,8 +61,5 @@ public class Form {
         return result;
     }
 
-    public JDialog getDialog() {
-        return dialog;
-    }
 }
 

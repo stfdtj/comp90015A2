@@ -112,7 +112,7 @@ public class Server  {
         }
 
         ((RemoteService) service).SetCanvas(gui.canvas);
-
+        service.SetWhiteboardGUI(gui);
 
     }
 }

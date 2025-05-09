@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class UpdateListener extends UnicastRemoteObject implements UpdateHandler {
 
     private Canvas canvas;
+    private WhiteboardGUI whiteboardGUI;
 
     @Override
     public void receiveDrawing(DrawingInfo info, TextInfo textInfo) throws RemoteException {
@@ -30,6 +31,16 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
     @Override
     public void receiveMessage(String m) throws RemoteException {
         canvas.ReceiveMessage(m);
+    }
+
+    @Override
+    public boolean NotifyRefuse() throws RemoteException {
+        return whiteboardGUI.RefuseNotice();
+    }
+
+    @Override
+    public void SetWhiteboardGUI(WhiteboardGUI whiteboardGUI) throws RemoteException {
+        this.whiteboardGUI = whiteboardGUI;
     }
 
 

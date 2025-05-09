@@ -48,10 +48,20 @@ public class Client {
 
             gui = new WhiteboardGUI(identity, userName, boardName, server, null);
 
+            // retry one time
             UpdateListener listener = new UpdateListener(gui.canvas);
 
             UpdateHandler stub = listener;
-            server.RegisterClient(stub);
+            stub.SetWhiteboardGUI(gui);
+            if (!server.RegisterClient(stub)) {
+                if (stub.NotifyRefuse()) {
+                    gui.canvas.TryAddRemoteUser();
+                    if (server.RegisterClient(stub)) {
+                        System.exit(0);
+                    }
+                }
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();

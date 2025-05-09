@@ -25,10 +25,9 @@ import java.util.Properties;
 public class Main {
 
     private static JFrame frame;
-    private static ArrayList<JButton> buttons = new ArrayList<>();
-    private static JPanel launcher, settings;
-    private static Properties props = new Properties();
-    private static String path = "src/main/main/resources/config.properties";
+    private static final ArrayList<JButton> buttons = new ArrayList<>();
+    private static final Properties props = new Properties();
+    private static final String path = "src/main/main/resources/config.properties";
 
 
 
@@ -36,7 +35,7 @@ public class Main {
         try (FileReader reader = new FileReader(path)) {
             props.load(reader);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            Log.error(ex.getMessage());
         }
         SwingUtilities.invokeLater(Main::MainGUI);
         Log.info("Main started");
@@ -53,19 +52,19 @@ public class Main {
         try {            Image icon = ImageIO.read(new File("src/main/main/resources/whiteboard_icon.png"));
             frame.setIconImage(icon);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error(e.getMessage());
         }
 
         JPanel cards = new JPanel(new CardLayout());
 
-        launcher = CreateLauncherPanel();
+        JPanel launcher = CreateLauncherPanel();
 
         cards.add(launcher, "main");
 
-        settings = CreateSettingsPanel(cards);
+        JPanel settings = CreateSettingsPanel(cards);
         cards.add(settings, "settings");
 
-        buttons.get(3).addActionListener(e -> {
+        buttons.get(3).addActionListener(_ -> {
             CardLayout cl = (CardLayout)cards.getLayout();
             cl.show(cards, "settings");
         });
@@ -106,19 +105,15 @@ public class Main {
 
 
         // create new white board
-        createBtn.addActionListener(e -> {
-            CreateNewProgram(frame, props);
-        });
+        createBtn.addActionListener(_ -> CreateNewProgram(frame, props));
 
 
         // open existing whiteboard
-        openBtn.addActionListener(e -> {
-            OpenNewProgram(frame, props);
-        });
+        openBtn.addActionListener(_ -> OpenNewProgram(frame, props));
 
 
         // join someone as client
-        joinBtn.addActionListener(e -> {
+        joinBtn.addActionListener(_ -> {
             // ip, port, username
             String ip = "";
             String port = "";
@@ -169,7 +164,7 @@ public class Main {
         JPanel bottomBar = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton back = new JButton("Back");
         SetButtonStyle(back);
-        back.addActionListener(e -> {
+        back.addActionListener(_ -> {
             CardLayout cl = (CardLayout)cards.getLayout();
             cl.show(cards, "main");
         });
@@ -204,20 +199,18 @@ public class Main {
         JButton save = new JButton("Save");
         bottomBar.add(save);
         SetButtonStyle(save);
-        save.addActionListener(e -> {
+        save.addActionListener(_ -> {
             String user = usernameField.getText();
             String pNum = portField.getText();
             props.setProperty("user.name", user);
             props.setProperty("rmi.port", pNum);
 
-            FileOutputStream out = null;
+            FileOutputStream out;
             try {
                 out = new FileOutputStream(path);
                 props.store(out, "saved");
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException(ex);
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                Log.error(ex.getMessage());
             }
 
         });
@@ -255,7 +248,7 @@ public class Main {
         form = form.addButton("OK", JOptionPane.OK_OPTION);
         int result = form.showDialog();
         if (result == JOptionPane.OK_OPTION) {
-            if (!board.getText().equals("")) {
+            if (!board.getText().isEmpty()) {
                 boardName = board.getText();
             }
 
@@ -288,7 +281,7 @@ public class Main {
         File savedDir = new File("src/main/main/resources/SavedWhiteBoards");
 
         String[] jsons = savedDir.isDirectory()
-                ? savedDir.list((d, n) -> n.toLowerCase().endsWith(".json"))
+                ? savedDir.list((_, n) -> n.toLowerCase().endsWith(".json"))
                 : null;
         if (jsons == null || jsons.length == 0) {
             JOptionPane.showMessageDialog(

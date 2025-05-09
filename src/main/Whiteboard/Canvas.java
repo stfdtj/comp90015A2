@@ -2,6 +2,7 @@ package Whiteboard;
 
 import Whiteboard.Utility.*;
 import main.Client;
+import main.Form;
 
 import javax.swing.*;
 import java.awt.*;
@@ -94,13 +95,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         this.requestFocusInWindow();
 
         me = new RemoteUser(username, cursorPt);
-        try {
-            remoteService.AddRemoteUser(me);
-            clients = remoteService.getUsers();
-            me.id = remoteService.GetNumUsers();
-        } catch (RemoteException e) {
-            Log.error(e.getMessage());
-        }
+        TryAddRemoteUser();
     }
 
     public void setCanvasSize(int w, int h) {
@@ -218,24 +213,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // shift everything by the current pan offset
         g2.translate(offsetX, offsetY);
 
-        for (RemoteUser client : clients) {
-            Point p = client.cusorPosition;
-            if (p == null) continue;
-
-            FontMetrics fm = g2.getFontMetrics();
-            int textW = fm.stringWidth(client.username);
-            int textH = fm.getHeight();
-
-            int x = p.x + 12;
-            int y = p.y + 16;
-
-            g2.setColor(client.color);
-            g2.fillRoundRect(x-4, y - textH + 2, textW+8, textH+4, 6,6);
-            g2.setColor(Color.WHITE);
-            g2.drawString(client.username, x, y);
-        }
-
-
         for (DrawingInfo info : shapes) {
             if (info == null) {
                 continue;
@@ -263,6 +240,23 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 g2.drawString(line, x, y);
                 y += lineHeight;
             }
+        }
+
+        for (RemoteUser client : clients) {
+            Point p = client.cusorPosition;
+            if (p == null) continue;
+
+            FontMetrics fm = g2.getFontMetrics();
+            int textW = fm.stringWidth(client.username);
+            int textH = fm.getHeight();
+
+            int x = p.x + 12;
+            int y = p.y + 16;
+
+            g2.setColor(client.color);
+            g2.fillRoundRect(x-5, y - textH + 2, textW+8, textH+2, 6,6);
+            g2.setColor(Color.WHITE);
+            g2.drawString(client.username, x, y);
         }
 
         if (previewShape != null) {
@@ -699,6 +693,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void setChatWindow(ChatWindow win) {
         this.win = win;
+    }
+
+    public void TryAddRemoteUser() {
+        try {
+            remoteService.AddRemoteUser(me);
+            clients = remoteService.getUsers();
+            me.id = remoteService.GetNumUsers();
+        } catch (RemoteException e) {
+            Log.error(e.getMessage());
+        }
     }
 
 }

@@ -1,7 +1,5 @@
 package Whiteboard;
 
-
-import Whiteboard.Utility.ChatRoom;
 import Whiteboard.Utility.ChatWindow;
 import Whiteboard.Utility.Log;
 import Whiteboard.Utility.WhiteboardData;
@@ -171,6 +169,32 @@ public class WhiteboardGUI extends JFrame {
                 button.setForeground(Color.WHITE);
             }
         });
+    }
+
+    public boolean NewJoinApplication() {
+        Form form = new Form(this, "Application of Join in");
+        form.addRow("A new user wants to join your whiteboard", new JLabel());
+        form.addButton("OK", JOptionPane.OK_OPTION);
+        form.addButton("Cancel", JOptionPane.CANCEL_OPTION);
+        int result = form.showDialog();
+        if (result == JOptionPane.OK_OPTION) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean RefuseNotice() {
+        Form form = new Form(this, "Connection refused");
+        form.addRow("The server refused you application, you have one time to resend application, retry?", new JLabel());
+        form.addButton("OK", JOptionPane.OK_OPTION);
+        form.addButton("Cancel", JOptionPane.CANCEL_OPTION);
+        int result = form.showDialog();
+        if (result == JOptionPane.OK_OPTION) {
+            return true;
+        }
+        System.exit(0);
+        return false;
     }
 
     // functions for server

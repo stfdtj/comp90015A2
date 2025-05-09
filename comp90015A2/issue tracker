@@ -1,4 +1,5 @@
 Issue                                                                           status
 when dragging, all painting will be translated                                  fixed
-"\n" will be ignored when drawing string                                        not solved
+"\n" will be ignored when drawing string                                        fixed
 textbox and dragging                                                            fixed
+new usr cannot receive previous message                                         not solved

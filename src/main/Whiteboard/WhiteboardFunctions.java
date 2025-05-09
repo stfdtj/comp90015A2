@@ -1,6 +1,5 @@
 package Whiteboard;
 
-import Whiteboard.Utility.ChatRoom;
 import Whiteboard.Utility.DrawingInfo;
 import Whiteboard.Utility.RemoteUser;
 import Whiteboard.Utility.TextInfo;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 
 public interface WhiteboardFunctions extends Remote {
 
-    void RegisterClient(UpdateHandler client) throws RemoteException;
+    boolean RegisterClient(UpdateHandler client) throws RemoteException;
     void BroadcastDrawing(DrawingInfo info) throws RemoteException;
     void SendDrawings(DrawingInfo info) throws RemoteException;
     void BroadCastText(TextInfo info) throws RemoteException;
@@ -22,5 +21,6 @@ public interface WhiteboardFunctions extends Remote {
     void UpdateCursor(Point p, int id) throws RemoteException;
     int GetNumUsers() throws RemoteException;
     void BroadCastMessage(String m) throws RemoteException;
-    ChatRoom GetChatRoom() throws RemoteException;
+    void SetWhiteboardGUI(WhiteboardGUI gui) throws RemoteException;
+    void RemoveLastUser() throws RemoteException;
 }
