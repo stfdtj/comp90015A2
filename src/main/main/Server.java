@@ -83,8 +83,8 @@ public class Server  {
         }
         Log.info("Server " + boardName + " started at " + ip);
 
-        UIManager.put("MenuBar.background",        new Color(255, 182, 185));
-        UIManager.put("Menu.background",          new Color(255, 182, 185));
+        UIManager.put("MenuBar.background", new Color(255, 182, 185));
+        UIManager.put("Menu.background", new Color(255, 182, 185));
         UIManager.put("MenuBar.Foreground", Color.WHITE);
         UIManager.put("Menu.Foreground", Color.WHITE);
 
@@ -102,9 +102,9 @@ public class Server  {
         }
 
 
-        UIManager.put("MenuBar.opaque",   true);
-        UIManager.put("Menu.opaque",      true);
-        UIManager.put("MenuItem.opaque",  true);
+        UIManager.put("MenuBar.opaque", true);
+        UIManager.put("Menu.opaque", true);
+        UIManager.put("MenuItem.opaque", true);
         if (data != null) {
             gui = new WhiteboardGUI(identity, userName, boardName, service, data);
         } else {

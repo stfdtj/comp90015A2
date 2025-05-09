@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Properties;
 
 
@@ -20,9 +21,9 @@ public class WhiteboardGUI extends JFrame {
 
     public Canvas canvas;
     public WhiteboardFunctions remoteService;
-    private JMenuBar menuBar = new JMenuBar();
-    private WhiteboardData data;
-    private Properties props;
+    private final JMenuBar menuBar = new JMenuBar();
+    private final WhiteboardData data;
+    private final Properties props;
 
 
 
@@ -51,7 +52,14 @@ public class WhiteboardGUI extends JFrame {
             Image icon = ImageIO.read(new File("src/main/Whiteboard/resources/whiteboard_icon.png"));
             this.setIconImage(icon);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.error(e.getMessage());
+        }
+
+        props = new Properties();
+        try (FileReader reader = new FileReader(Main.getPath())) {
+            props.load(reader);
+        } catch (IOException ex) {
+            Log.error(ex.getMessage());
         }
 
 
@@ -69,33 +77,29 @@ public class WhiteboardGUI extends JFrame {
         // some options should not be visible to clients
         Log.info("Try loading property");
         if (identity) {
-            props = new Properties();
-            try (FileReader reader = new FileReader(Main.getPath())) {
-                props.load(reader);
-            } catch (IOException ex) {
-                Log.error(ex.getMessage());
-            }
 
             ServerFuncListener();
         }
         Log.info("Property Loaded");
-        JMenu exit = new JMenu("Exit");
-        JMenuItem exitItem = new JMenuItem("Exit");
-        exit.add(exitItem);
-        exitItem.addActionListener(e -> {
-            Form form = new Form(this, "Exit");
-            form.addRow("Save current Whiteboard before quitting?", new JLabel());
-            form.addButton("OK", JOptionPane.OK_OPTION)
-                    .addButton("Cancel", JOptionPane.CANCEL_OPTION);
-            int result = form.showDialog();
-            if (result == JOptionPane.OK_OPTION) {
-                // should check
-                canvas.Saving(null);
-                System.exit(0);
-            }
+        // server can quit from file menu
+        if (!identity) {
+            JMenu exit = new JMenu("Exit");
+            JMenuItem exitItem = new JMenuItem("Exit");
+            exit.add(exitItem);
+            exitItem.addActionListener(_ -> {
+                Form form = new Form(this, "Exit");
+                form.addRow("Are you sure you want to exit?", new JLabel());
+                form.addButton("OK", JOptionPane.OK_OPTION)
+                        .addButton("Cancel", JOptionPane.CANCEL_OPTION);
+                int result = form.showDialog();
+                if (result == JOptionPane.OK_OPTION) {
+                    System.exit(0);
+                }
 
-        });
-        menuBar.add(exit);
+            });
+            menuBar.add(exit);
+        }
+
 
         JMenu settings = new JMenu("Settings");
         menuBar.add(settings);
@@ -156,7 +160,7 @@ public class WhiteboardGUI extends JFrame {
     private void ServerFuncListener() {
         JMenu fileMenu = new JMenu("File");
         JMenuItem newFile = new JMenuItem("New");
-        newFile.addActionListener(e -> {
+        newFile.addActionListener(_ -> {
             Form form = new Form(this, "Exit");
             form.addRow("Save current Whiteboard before creating new one?", new JLabel());
             form.addButton("OK", JOptionPane.OK_OPTION)
@@ -172,15 +176,13 @@ public class WhiteboardGUI extends JFrame {
         fileMenu.add(newFile);
 
         JMenuItem open = new JMenuItem("Open");
-        open.addActionListener(e -> {
-            Main.OpenNewProgram(this, props);
-        });
+        open.addActionListener(_ -> Main.OpenNewProgram(this, props));
         fileMenu.add(open);
 
 
 
         JMenuItem save = new JMenuItem("Save");
-        save.addActionListener(e -> {
+        save.addActionListener(_ -> {
             // should check
             canvas.Saving(null);
         });
@@ -189,7 +191,7 @@ public class WhiteboardGUI extends JFrame {
 
 
         JMenuItem saveAs = new JMenuItem("Save As...");
-        saveAs.addActionListener(e -> {
+        saveAs.addActionListener(_ -> {
             File saveDir = new File("src/main/main/resources/SavedWhiteBoards");
             if (!saveDir.isDirectory()) {
                 saveDir.mkdirs();
@@ -220,9 +222,9 @@ public class WhiteboardGUI extends JFrame {
             );
         });
 
-        JMenuItem exit = new JMenuItem("Exit");
-        exit.addActionListener(e -> {
-            Form form = new Form(this, "Exit");
+        JMenuItem close = new JMenuItem("Close");
+        close.addActionListener(_ -> {
+            Form form = new Form(this, "Close");
             form.addRow("Save current Whiteboard before quitting?", new JLabel());
             form.addButton("OK", JOptionPane.OK_OPTION)
                     .addButton("Cancel", JOptionPane.CANCEL_OPTION);
@@ -236,16 +238,25 @@ public class WhiteboardGUI extends JFrame {
 
         fileMenu.add(saveAs);
         fileMenu.add(new JToolBar.Separator());
-        fileMenu.add(exit);
+        fileMenu.add(close);
         menuBar.add(fileMenu);
 
-
-        JMenu invite = new JMenu("Invite");
-        menuBar.add(invite);
-
-
-
         JMenu manageClients = new JMenu("Manage Clients");
+        JMenuItem ipAndPort = new JMenuItem("IP and Port");
+        ipAndPort.addActionListener(_ -> {
+            Form form = new Form(this, "Server runs on");
+            String ip = null;
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress();
+            } catch (IOException e1) {
+                Log.error(e1.getMessage());
+            }
+            form.addRow("IP address:", new JLabel(ip));
+            form.addRow("Port:", new JLabel(props.getProperty("rmi.port")));
+            form.showDialog();
+        });
+        manageClients.add(ipAndPort);
+
         menuBar.add(manageClients);
     }
 

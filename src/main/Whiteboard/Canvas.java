@@ -1,6 +1,8 @@
 package Whiteboard;
 
 import Whiteboard.Utility.*;
+import main.Client;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -45,6 +47,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private final Color backgroundColor = Color.WHITE;
     private float thickness = 3;
     private static Rectangle textBoxLocation;
+    private static ArrayList<RemoteUser> clients;
+    RemoteUser me;
 
 
     private Point cursorPt = null;
@@ -85,9 +89,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
         this.setFocusable(true);
         this.requestFocusInWindow();
-        // testP
-        // texts.add(new TextInfo("sample", Color.BLACK, DrawingMode.TEXT, 12, false, false,
-                //false, new Font("Arial", Font.PLAIN, 12), new Point(100,100)));
+
+        me = new RemoteUser(username, cursorPt);
+        try {
+            remoteService.AddRemoteUser(me);
+            clients = remoteService.getUsers();
+            me.id = remoteService.GetNumUsers();
+        } catch (RemoteException e) {
+            Log.error(e.getMessage());
+        }
     }
 
     public void setCanvasSize(int w, int h) {
@@ -194,7 +204,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // render the drawn shapes
     // everything drawn before should be translated
     // but not affect currently doing one
-    // lock everything if right drag?
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -205,20 +215,21 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         // shift everything by the current pan offset
         g2.translate(offsetX, offsetY);
 
-        if (cursorPt != null) {
-            String user = username;
+        for (RemoteUser client : clients) {
+            Point p = client.cusorPosition;
+            if (p == null) continue;
+
             FontMetrics fm = g2.getFontMetrics();
-            int textW = fm.stringWidth(user);
+            int textW = fm.stringWidth(client.username);
             int textH = fm.getHeight();
 
-            int x = cursorPt.x + 12;
-            int y = cursorPt.y + 16;
+            int x = p.x + 12;
+            int y = p.y + 16;
 
-            g2.setColor(new Color(0,0,0, 80));
+            g2.setColor(client.color);
             g2.fillRoundRect(x-4, y - textH + 2, textW+8, textH+4, 6,6);
-
             g2.setColor(Color.WHITE);
-            g2.drawString(user, x, y);
+            g2.drawString(client.username, x, y);
         }
 
 
@@ -304,6 +315,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             return;
         }
         cursorPt = new Point(e.getX() - offsetX, e.getY() - offsetY);
+        try {
+            remoteService.UpdateCursor(cursorPt, me.id);
+        } catch (RemoteException ex) {
+            Log.error("Remote exception: " + ex);
+        }
         repaint();
         if(SwingUtilities.isLeftMouseButton(e)) {
             mode.mouseDragged(e, this);
@@ -381,6 +397,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
     @Override public void mouseMoved(MouseEvent e) {
         cursorPt = new Point(e.getX() - offsetX, e.getY() - offsetY);
+        try {
+            remoteService.UpdateCursor(cursorPt, me.id);
+        } catch (RemoteException ex) {
+            throw new RuntimeException(ex);
+        }
         repaint();
     }
 
@@ -556,9 +577,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         slider.setFocusable(false);
         slider.setBackground(new Color(243,243,243,255));
 
-        slider.addChangeListener(_ -> {
-            thickness = slider.getValue();
-        });
+        slider.addChangeListener(_ -> thickness = slider.getValue());
 
         sliderPanel.add(slider, BorderLayout.CENTER);
         return sliderPanel;
@@ -664,6 +683,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             Log.info("This data is empty");
         }
 
+    }
+
+    public void setClients(ArrayList<RemoteUser> clients) {
+        Canvas.clients = clients;
+        Log.info(me.id + " " + "clients " + clients.size());
+        repaint();
     }
 
 }
