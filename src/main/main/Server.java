@@ -113,5 +113,6 @@ public class Server  {
 
         ((RemoteService) service).SetCanvas(gui.canvas);
 
+
     }
 }

@@ -49,6 +49,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private static Rectangle textBoxLocation;
     private static ArrayList<RemoteUser> clients;
     RemoteUser me;
+    private ChatWindow win;
 
 
     private Point cursorPt = null;
@@ -62,12 +63,14 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private final WhiteboardFunctions remoteService;
 
-    public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName, WhiteboardData saved) {
+    public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName,
+                  WhiteboardData saved, ChatWindow win) {
         this.remoteService = service;
         this.identity = identity;
         this.username = username;
         this.boardName = boardName;
         this.setLayout(null);
+        this.win = win;
         data = saved;
         allocate();
         repaint();
@@ -687,8 +690,15 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     public void setClients(ArrayList<RemoteUser> clients) {
         Canvas.clients = clients;
-        Log.info(me.id + " " + "clients " + clients.size());
         repaint();
+    }
+
+    public void ReceiveMessage(String m) {
+        win.AppendMessage(m);
+    }
+
+    public void setChatWindow(ChatWindow win) {
+        this.win = win;
     }
 
 }

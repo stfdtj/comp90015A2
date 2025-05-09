@@ -1,6 +1,7 @@
 package main;
 
 import Whiteboard.*;
+import Whiteboard.Utility.Log;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -52,11 +53,9 @@ public class Client {
             UpdateHandler stub = listener;
             server.RegisterClient(stub);
 
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        Log.info("Client started");
     }
 }

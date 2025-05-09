@@ -1,9 +1,6 @@
 package Whiteboard;
 
-import Whiteboard.Utility.DrawingInfo;
-import Whiteboard.Utility.Log;
-import Whiteboard.Utility.RemoteUser;
-import Whiteboard.Utility.TextInfo;
+import Whiteboard.Utility.*;
 
 import java.awt.*;
 import java.rmi.RemoteException;
@@ -16,9 +13,10 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     private Canvas canvas;
     private final ArrayList<RemoteUser> users = new ArrayList<>();
     private int numUsers = 0;
+    public ChatRoom chatRoom;
 
     public RemoteService() throws RemoteException {
-
+        chatRoom = new ChatRoom(users);
     }
 
     @Override
@@ -31,6 +29,10 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
         for (TextInfo info: canvas.getTextInfo()) {
             BroadCastText(info);
+        }
+
+        for (String past : chatRoom.getMessages()) {
+            client.receiveMessage(past);
         }
 
     }
@@ -62,8 +64,8 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         numUsers++;
         users.add(user);
         users.get(numUsers - 1).id = numUsers;
+
         Log.info("User " + user.id + " added to user list");
-        Log.info(numUsers + "   this is string");
     }
 
     @Override
@@ -77,7 +79,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         for (UpdateHandler client : clients) {
             client.receiveCursorUpdate(users);
         }
-        Log.info("remote service updated");
     }
 
     @Override
@@ -109,5 +110,18 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         return numUsers;
     }
 
+    @Override
+    public void BroadCastMessage(String m) throws RemoteException {
+        chatRoom.appendMessage(m);
+        canvas.ReceiveMessage(m);
+        for (UpdateHandler client : clients) {
+            client.receiveMessage(m);
+        }
+    }
+
+    @Override
+    public ChatRoom GetChatRoom() throws RemoteException {
+        return chatRoom;
+    }
 
 }

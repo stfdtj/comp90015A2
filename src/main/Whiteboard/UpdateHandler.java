@@ -11,4 +11,5 @@ import java.util.ArrayList;
 public interface UpdateHandler extends Remote {
     void receiveDrawing(DrawingInfo info, TextInfo textInfo) throws RemoteException;
     void receiveCursorUpdate(ArrayList<RemoteUser> users)throws RemoteException;
+    void receiveMessage(String m) throws RemoteException;
 }

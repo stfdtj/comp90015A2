@@ -1,5 +1,6 @@
 package Whiteboard;
 
+import Whiteboard.Utility.ChatRoom;
 import Whiteboard.Utility.DrawingInfo;
 import Whiteboard.Utility.RemoteUser;
 import Whiteboard.Utility.TextInfo;
@@ -20,4 +21,6 @@ public interface WhiteboardFunctions extends Remote {
     ArrayList<RemoteUser> getUsers() throws RemoteException;
     void UpdateCursor(Point p, int id) throws RemoteException;
     int GetNumUsers() throws RemoteException;
+    void BroadCastMessage(String m) throws RemoteException;
+    ChatRoom GetChatRoom() throws RemoteException;
 }

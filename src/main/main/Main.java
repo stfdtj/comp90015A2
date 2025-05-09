@@ -39,6 +39,7 @@ public class Main {
             ex.printStackTrace();
         }
         SwingUtilities.invokeLater(Main::MainGUI);
+        Log.info("Main started");
     }
 
     // set up panel
@@ -136,8 +137,22 @@ public class Main {
 
 
             String username = props.getProperty("user.name");
-            System.out.println(username);
-            Client.main(new String[]{ip, port, username});
+            String classpath = System.getProperty("java.class.path");
+
+            String[] cmd = {
+                    "java", "-cp", classpath,
+                    "main.Client",
+                    ip, port, username,
+            };
+            System.out.println("cmd: " + Arrays.toString(cmd));
+            try {
+                Runtime.getRuntime().exec(cmd);
+                frame.setState(Frame.ICONIFIED);
+                frame.dispose();
+            } catch (IOException ex) {
+                Log.error(ex.getMessage());
+            }
+
             frame.setState(Frame.ICONIFIED);
             frame.dispose();
         });

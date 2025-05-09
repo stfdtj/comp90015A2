@@ -1,58 +1,58 @@
 package Whiteboard.Utility;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Log {
-    private static final String LOG_FILE = "src/main/Whiteboard/resources/board.log";
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public static void action(String msg) {
-        log("ACTION", msg);
-    }
-
-    public static void error(String msg) {
-        log("ERROR", msg);
-    }
+    private static final String LOG_DIR = "src/main/Whiteboard/resources";
+    private static final String LOG_BASENAME = "board";
+    private static final DateTimeFormatter FILE_TS_FMT =
+            DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
+    private static final DateTimeFormatter LINE_TS_FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
-    public static void info(String msg) {
-        log("INFO", msg);
-    }
+    private static final Path logPath;
+    private static PrintWriter writer;
 
-    private static void log(String level, String msg) {
-        String timestamp = formatter.format(new Date());
-        String formatted = String.format("[%s] [%s] %s", level, timestamp, msg);
+    static {
+        try {
+            Files.createDirectories(Paths.get(LOG_DIR));
 
-        // if failed to create log file you can still get log from terminal
-        System.out.println(formatted);
+            String ts = LocalDateTime.now().format(FILE_TS_FMT);
+            logPath = Paths.get(LOG_DIR, LOG_BASENAME + "-" + ts + ".log");
 
+            Files.createFile(logPath);
 
-
-        Path path = Paths.get(LOG_FILE);
-
-        // if file exist, write to it
-        if (Files.exists(path)) {
-            try (FileWriter writer = new FileWriter(LOG_FILE, true)) {
-                writer.write(formatted + "\n");
-            } catch (IOException e) {
-                System.err.println("[ERROR] Failed to write log to file.");
-            }
+            writer = new PrintWriter(
+                    Files.newBufferedWriter(
+                            logPath,
+                            StandardCharsets.UTF_8,
+                            StandardOpenOption.APPEND),
+                    /* autoFlush= */ true
+            );
+        } catch (IOException e) {
+            throw new ExceptionInInitializerError("Failed to init Log: " + e);
         }
+    }
 
-        // if not create a new one
-        if (Files.notExists(path)) {
-            try {
-                Files.createFile(path);
-            } catch (IOException e) {
-                System.err.println("[ERROR] Failed to create log file.");
-            }
+    public static void action(String msg) { log("ACTION", msg); }
+    public static void info(  String msg) { log("INFO",   msg); }
+    public static void error( String msg) { log("ERROR",  msg); }
 
-        }
+    private static synchronized void log(String level, String msg) {
+        String now = LocalDateTime.now().format(LINE_TS_FMT);
+        String line = String.format("[%s] [%s] %s", level, now, msg);
+
+        // always echo to console
+        System.out.println(line);
+
+        // then write to file
+        writer.println(line);
     }
 }

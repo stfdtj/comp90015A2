@@ -25,7 +25,11 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
     @Override
     public void receiveCursorUpdate(ArrayList<RemoteUser> users) throws RemoteException {
         canvas.setClients(users);
-        Log.info("receive cursor called");
+    }
+
+    @Override
+    public void receiveMessage(String m) throws RemoteException {
+        canvas.ReceiveMessage(m);
     }
 
 

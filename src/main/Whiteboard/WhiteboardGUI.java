@@ -1,6 +1,8 @@
 package Whiteboard;
 
 
+import Whiteboard.Utility.ChatRoom;
+import Whiteboard.Utility.ChatWindow;
 import Whiteboard.Utility.Log;
 import Whiteboard.Utility.WhiteboardData;
 import main.Form;
@@ -14,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.rmi.RemoteException;
 import java.util.Properties;
 
 
@@ -24,6 +27,7 @@ public class WhiteboardGUI extends JFrame {
     private final JMenuBar menuBar = new JMenuBar();
     private final WhiteboardData data;
     private final Properties props;
+    public ChatWindow chatWindow;
 
 
 
@@ -77,12 +81,13 @@ public class WhiteboardGUI extends JFrame {
         // some options should not be visible to clients
         Log.info("Try loading property");
         if (identity) {
-
+            // component1, server options
             ServerFuncListener();
         }
         Log.info("Property Loaded");
         // server can quit from file menu
         if (!identity) {
+            // component2, client exit
             JMenu exit = new JMenu("Exit");
             JMenuItem exitItem = new JMenuItem("Exit");
             exit.add(exitItem);
@@ -104,7 +109,21 @@ public class WhiteboardGUI extends JFrame {
         JMenu settings = new JMenu("Settings");
         menuBar.add(settings);
         JMenu chat = new JMenu("Chat");
+        JMenuItem openChat = new JMenuItem("Open Chat");
+        openChat.addActionListener(_ -> {
+            if (chatWindow == null) {
+                chatWindow = new ChatWindow(userName,this);
+                canvas.setChatWindow(chatWindow);
+                chatWindow.frame.setVisible(true);
+            } else {
+                chatWindow.frame.setVisible(true);
+            }
+        });
+        chat.add(openChat);
         menuBar.add(chat);
+
+
+
         JMenu helpMenu = new JMenu("Help");
         menuBar.add(helpMenu);
 
@@ -113,7 +132,7 @@ public class WhiteboardGUI extends JFrame {
 
         Log.action("Creating Canvas");
 
-        canvas = new Canvas(remoteService, identity, userName, boardName, data);
+        canvas = new Canvas(remoteService, identity, userName, boardName, data, chatWindow);
 
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
@@ -153,7 +172,6 @@ public class WhiteboardGUI extends JFrame {
             }
         });
     }
-
 
     // functions for server
     // save, manage clients
