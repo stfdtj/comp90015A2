@@ -5,6 +5,8 @@ import main.Form;
 
 import java.awt.*;
 import java.rmi.RemoteException;
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
@@ -24,6 +26,13 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public boolean RegisterClient(UpdateHandler client) throws RemoteException {
         if (whiteboardGUI.NewJoinApplication()) {
             clients.add(client);
+            users.get(numUsers - 1).SetUpdateHandler(client);
+            try {
+                String clientHost = RemoteServer.getClientHost();
+                users.get(numUsers - 1).ip = clientHost;
+            } catch (ServerNotActiveException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             RemoveLastUser();
             client.NotifyRefuse();
@@ -131,6 +140,18 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public void RemoveLastUser() throws RemoteException {
         users.remove(users.get(numUsers - 1));
         numUsers--;
+    }
+
+    @Override
+    public void KickUser(int id) throws RemoteException {
+        UpdateHandler client = users.get(id).getUpdateHandler();
+        for (UpdateHandler c : clients) {
+            if(c.equals(client)) {
+                clients.remove(c);
+                break;
+            }
+        }
+        users.set(id, null);
     }
 
 

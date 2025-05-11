@@ -2,6 +2,7 @@ package Whiteboard;
 
 import Whiteboard.Utility.ChatWindow;
 import Whiteboard.Utility.Log;
+import Whiteboard.Utility.RemoteUser;
 import Whiteboard.Utility.WhiteboardData;
 import main.Form;
 import main.Main;
@@ -15,6 +16,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Properties;
 
 
@@ -264,6 +266,7 @@ public class WhiteboardGUI extends JFrame {
             );
         });
 
+        // notify user,
         JMenuItem close = new JMenuItem("Close");
         close.addActionListener(_ -> {
             Form form = new Form(this, "Close");
@@ -298,7 +301,59 @@ public class WhiteboardGUI extends JFrame {
             form.showDialog();
         });
         manageClients.add(ipAndPort);
+        JMenuItem manage = new JMenuItem("Manage Online Clients");
+        manage.addActionListener(_ -> {
+            JDialog table = new JDialog(this, "Manage Online Clients", true);
+            JPanel content = new JPanel(new BorderLayout(5,5));
 
+            try {
+                ArrayList<RemoteUser> users = remoteService.getUsers();
+                JPanel grid = new JPanel(new GridLayout(users.size()+1, 5, 5, 5));
+                grid.add(new JLabel("Username", SwingConstants.CENTER));
+                grid.add(new JLabel("ID",       SwingConstants.CENTER));
+                grid.add(new JLabel("IP",       SwingConstants.CENTER));
+                grid.add(new JLabel("Status",   SwingConstants.CENTER));
+                grid.add(new JLabel("Action",   SwingConstants.CENTER));
+                for (RemoteUser user: users) {
+                    grid.add(new JLabel(user.username, SwingConstants.CENTER));
+                    grid.add(new JLabel(String.valueOf(user.id), SwingConstants.CENTER));
+                    grid.add(new JLabel(user.ip, SwingConstants.CENTER));
+                    grid.add(new JLabel(user.status.toString(), SwingConstants.CENTER));
+                    JButton kick = new JButton("Kick");
+                    kick.addActionListener(e2 -> {
+                        try {
+                            remoteService.KickUser(user.id);
+                            table.dispose();
+                        } catch(RemoteException ex) {
+                            JOptionPane.showMessageDialog(
+                                    table,
+                                    "Failed to kick user:\n" + ex.getMessage(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    });
+                    grid.add(kick);
+                }
+                content.add(grid, BorderLayout.CENTER);
+
+                JButton c = new JButton("Close");
+                c.addActionListener(_ -> table.dispose());
+                JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                footer.add(c);
+                content.add(footer, BorderLayout.SOUTH);
+
+                table.setContentPane(content);
+                table.pack();
+                table.setLocationRelativeTo(this);
+                table.setVisible(true);
+
+            } catch (RemoteException e) {
+                Log.error(e.getMessage());
+            }
+
+        });
+        manageClients.add(manage);
         menuBar.add(manageClients);
     }
 

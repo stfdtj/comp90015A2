@@ -23,4 +23,5 @@ public interface WhiteboardFunctions extends Remote {
     void BroadCastMessage(String m) throws RemoteException;
     void SetWhiteboardGUI(WhiteboardGUI gui) throws RemoteException;
     void RemoveLastUser() throws RemoteException;
+    void KickUser(int id) throws RemoteException;
 }
