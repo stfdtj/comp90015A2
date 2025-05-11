@@ -324,6 +324,7 @@ public class WhiteboardGUI extends JFrame {
                     kick.addActionListener(e2 -> {
                         try {
                             remoteService.KickUser(user.id);
+                            Log.info("User " + user.id + " kicked");
                             table.dispose();
                         } catch(RemoteException ex) {
                             JOptionPane.showMessageDialog(
