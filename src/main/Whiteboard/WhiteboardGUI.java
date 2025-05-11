@@ -305,6 +305,7 @@ public class WhiteboardGUI extends JFrame {
         manage.addActionListener(_ -> {
             JDialog table = new JDialog(this, "Manage Online Clients", true);
             JPanel content = new JPanel(new BorderLayout(5,5));
+            Log.info("Clicked");
 
             try {
                 ArrayList<RemoteUser> users = remoteService.getUsers();

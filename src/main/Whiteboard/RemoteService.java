@@ -151,6 +151,8 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
                 break;
             }
         }
+        users.get(numUsers - 1).cusorPosition = null;
+        users.get(numUsers - 1).status = "OFFLINE";
         users.set(id, null);
     }
 
