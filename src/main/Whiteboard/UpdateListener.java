@@ -48,4 +48,21 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
         super();
         this.canvas = canvas;
     }
+
+    @Override
+    public void NotifyKicked() throws RemoteException {
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(whiteboardGUI, "You have been kicked by the server.");
+            System.exit(0);
+        });
+    }
+
+    @Override
+    public void NotifyServerShutDown() throws RemoteException {
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(whiteboardGUI, "The server has been shut down.");
+            System.exit(0);
+        });
+    }
+
 }

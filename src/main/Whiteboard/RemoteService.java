@@ -144,7 +144,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     @Override
     public void KickUser(int id) throws RemoteException {
-        Log.info("User " + id + " kicked");
 
         RemoteUser kicked = null;
         for (RemoteUser u : users) {
@@ -163,16 +162,23 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
         UpdateHandler handler = kicked.getUpdateHandler();
         try {
-            handler.NotifyRefuse(); 
+            handler.NotifyKicked();
         } catch (RemoteException ex) {
             Log.error("Failed to notify kicked user: " + ex.getMessage());
         }
 
         clients.removeIf(c -> c.equals(handler));
 
-        kicked.status = "OFFLINE";
+        kicked.status = "KICKED";
         kicked.cusorPosition = null;
 
+    }
+
+    @Override
+    public void NotifyServerShutDown() throws RemoteException {
+        for (UpdateHandler client : clients) {
+            client.NotifyServerShutDown();
+        }
     }
 
 

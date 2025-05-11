@@ -14,4 +14,6 @@ public interface UpdateHandler extends Remote {
     void receiveMessage(String m) throws RemoteException;
     boolean NotifyRefuse() throws RemoteException;
     void SetWhiteboardGUI(WhiteboardGUI whiteboardGUI) throws RemoteException;
+    void NotifyKicked() throws RemoteException;
+    void NotifyServerShutDown() throws RemoteException;
 }

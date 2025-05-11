@@ -277,6 +277,8 @@ public class WhiteboardGUI extends JFrame {
             if (result == JOptionPane.OK_OPTION) {
                 // should check
                 canvas.Saving(null);
+                // notify all users the server is shutdown
+
                 System.exit(0);
             }
         });
