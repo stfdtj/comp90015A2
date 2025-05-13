@@ -57,6 +57,8 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
         });
     }
 
+
+    // not working?
     @Override
     public void NotifyServerShutDown() throws RemoteException {
         SwingUtilities.invokeLater(() -> {

@@ -11,6 +11,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -28,6 +30,7 @@ public class WhiteboardGUI extends JFrame {
     private final WhiteboardData data;
     private final Properties props;
     public ChatWindow chatWindow;
+    private UpdateHandler stub = null;
 
 
 
@@ -38,6 +41,7 @@ public class WhiteboardGUI extends JFrame {
 
         setTitle(boardName);
         setSize(1920, 1080);
+        // override?
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -98,6 +102,13 @@ public class WhiteboardGUI extends JFrame {
                         .addButton("Cancel", JOptionPane.CANCEL_OPTION);
                 int result = form.showDialog();
                 if (result == JOptionPane.OK_OPTION) {
+                    try {
+                        Log.info("trid");
+                        remoteService.UserExit(stub);
+                        Log.info("Exit process callled");
+                    } catch (RemoteException ex) {
+                        Log.error(ex.getMessage());
+                    }
                     System.exit(0);
                 }
 
@@ -266,7 +277,6 @@ public class WhiteboardGUI extends JFrame {
             );
         });
 
-        // notify user,
         JMenuItem close = new JMenuItem("Close");
         close.addActionListener(_ -> {
             Form form = new Form(this, "Close");
@@ -278,7 +288,13 @@ public class WhiteboardGUI extends JFrame {
                 // should check
                 canvas.Saving(null);
                 // notify all users the server is shutdown
-
+                try {
+                    remoteService.NotifyServerShutDown();
+                } catch (RemoteException e) {
+                    Log.error(e.getMessage());
+                }
+                System.exit(0);
+            } else {
                 System.exit(0);
             }
         });
@@ -298,8 +314,16 @@ public class WhiteboardGUI extends JFrame {
             } catch (IOException e1) {
                 Log.error(e1.getMessage());
             }
-            form.addRow("IP address:", new JLabel(ip));
-            form.addRow("Port:", new JLabel(props.getProperty("rmi.port")));
+            JTextField ipField = new JTextField(ip);
+            JTextField portField = new JTextField(props.getProperty("rmi.port"));
+            ipField.setEditable(false);
+            ipField.setBorder(null);
+            ipField.setOpaque(false);
+            portField.setEditable(false);
+            portField.setBorder(null);
+            portField.setOpaque(false);
+            form.addRow("IP address:", ipField);
+            form.addRow("Port:", portField);
             form.showDialog();
         });
         manageClients.add(ipAndPort);
@@ -322,22 +346,26 @@ public class WhiteboardGUI extends JFrame {
                     grid.add(new JLabel(String.valueOf(user.id), SwingConstants.CENTER));
                     grid.add(new JLabel(user.ip, SwingConstants.CENTER));
                     grid.add(new JLabel(user.status.toString(), SwingConstants.CENTER));
-                    JButton kick = new JButton("Kick");
-                    kick.addActionListener(e2 -> {
-                        try {
-                            remoteService.KickUser(user.id);
-                            Log.info("User " + user.id + " kicked");
-                            table.dispose();
-                        } catch(RemoteException ex) {
-                            JOptionPane.showMessageDialog(
-                                    table,
-                                    "Failed to kick user:\n" + ex.getMessage(),
-                                    "Error",
-                                    JOptionPane.ERROR_MESSAGE
-                            );
-                        }
-                    });
-                    grid.add(kick);
+                    if (user.id != 1) {
+                        JButton kick = new JButton("Kick");
+                        kick.addActionListener(e2 -> {
+                            try {
+                                remoteService.KickUser(user.id);
+                                Log.info("User " + user.id + " kicked");
+                                table.dispose();
+                            } catch(RemoteException ex) {
+                                JOptionPane.showMessageDialog(
+                                        table,
+                                        "Failed to kick user:\n" + ex.getMessage(),
+                                        "Error",
+                                        JOptionPane.ERROR_MESSAGE
+                                );
+                            }
+                        });
+                        grid.add(kick);
+                    } else {
+                        grid.add(new JSeparator());
+                    }
                 }
                 content.add(grid, BorderLayout.CENTER);
 
@@ -359,6 +387,10 @@ public class WhiteboardGUI extends JFrame {
         });
         manageClients.add(manage);
         menuBar.add(manageClients);
+    }
+
+    public void SetStub(UpdateHandler stub) {
+        this.stub = stub;
     }
 
 }

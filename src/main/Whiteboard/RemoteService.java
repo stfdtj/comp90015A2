@@ -3,12 +3,14 @@ package Whiteboard;
 import Whiteboard.Utility.*;
 import main.Form;
 
+import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
 import java.rmi.server.RemoteServer;
 import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class RemoteService extends UnicastRemoteObject implements WhiteboardFunctions {
 
@@ -89,9 +91,14 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     @Override
     public void UpdateCursor(Point p, int id) throws RemoteException {
         users.get(id - 1).cusorPosition = p;
+
         for (UpdateHandler client : clients) {
             client.receiveCursorUpdate(users);
         }
+
+        canvas.setClients(users);
+
+        SwingUtilities.invokeLater(canvas::repaint);
     }
 
     @Override
@@ -179,6 +186,26 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         for (UpdateHandler client : clients) {
             client.NotifyServerShutDown();
         }
+    }
+
+    @Override
+    public void UserExit(UpdateHandler stub) throws RemoteException {
+        Log.info("remote service called");
+        for (RemoteUser u : users) {
+            if (u.getUpdateHandler().equals(stub)) {
+                u.status = "OFFLINE";
+                u.cusorPosition = null;
+                u.SetUpdateHandler(null);
+            }
+        }
+        Iterator<UpdateHandler> it = clients.iterator();
+        while (it.hasNext()) {
+            if (it.next().equals(stub)) {
+                it.remove();
+                break;
+            }
+        }
+        Log.info("remote service finished");
     }
 
 

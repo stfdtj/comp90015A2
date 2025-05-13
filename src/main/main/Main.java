@@ -251,26 +251,26 @@ public class Main {
             if (!board.getText().isEmpty()) {
                 boardName = board.getText();
             }
+            String name = props.getProperty("user.name");
+            // try to create a new process
+            String classpath = System.getProperty("java.class.path");
+            System.out.println(classpath);
+            String[] cmd = {
+                    "java", "-cp", classpath,
+                    "main.Server",
+                    "true", name, boardName, port
+            };
+            System.out.println("cmd: " + Arrays.toString(cmd));
+            try {
+                Runtime.getRuntime().exec(cmd);
+                frame.setState(Frame.ICONIFIED);
+                frame.dispose();
+            } catch (IOException ex) {
+                Log.error(ex.getMessage());
+            }
 
         }
 
-        String name = props.getProperty("user.name");
-        // try to create a new process
-        String classpath = System.getProperty("java.class.path");
-        System.out.println(classpath);
-        String[] cmd = {
-                "java", "-cp", classpath,
-                "main.Server",
-                "true", name, boardName, port
-        };
-        System.out.println("cmd: " + Arrays.toString(cmd));
-        try {
-            Runtime.getRuntime().exec(cmd);
-            frame.setState(Frame.ICONIFIED);
-            frame.dispose();
-        } catch (IOException ex) {
-            Log.error(ex.getMessage());
-        }
     }
 
     public static String getPath() {

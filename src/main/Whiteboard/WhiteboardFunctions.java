@@ -25,4 +25,5 @@ public interface WhiteboardFunctions extends Remote {
     void RemoveLastUser() throws RemoteException;
     void KickUser(int id) throws RemoteException;
     void NotifyServerShutDown() throws RemoteException;
+    void UserExit(UpdateHandler stub) throws RemoteException;
 }
