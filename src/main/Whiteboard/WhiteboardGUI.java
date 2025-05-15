@@ -6,13 +6,21 @@ import Whiteboard.Utility.RemoteUser;
 import Whiteboard.Utility.WhiteboardData;
 import main.Form;
 import main.Main;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,6 +28,10 @@ import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 
 
 public class WhiteboardGUI extends JFrame {
@@ -31,6 +43,7 @@ public class WhiteboardGUI extends JFrame {
     private final Properties props;
     public ChatWindow chatWindow;
     private UpdateHandler stub = null;
+    private String exportPath = null;
 
 
 
@@ -56,19 +69,21 @@ public class WhiteboardGUI extends JFrame {
         this.remoteService = remoteService;
 
 
-        try {
-            Image icon = ImageIO.read(new File("src/main/Whiteboard/resources/whiteboard_icon.png"));
-            this.setIconImage(icon);
-        } catch (IOException e) {
-            Log.error(e.getMessage());
-        }
-
         props = new Properties();
         try (FileReader reader = new FileReader(Main.getPath())) {
             props.load(reader);
         } catch (IOException ex) {
             Log.error(ex.getMessage());
         }
+
+        try {
+            Image icon = ImageIO.read(new File(props.getProperty("app.icon")));
+            this.setIconImage(icon);
+        } catch (IOException e) {
+            Log.error(e.getMessage());
+        }
+
+        exportPath = props.getProperty("user.export");
 
 
         JPanel titleBar = new JPanel();
@@ -103,9 +118,7 @@ public class WhiteboardGUI extends JFrame {
                 int result = form.showDialog();
                 if (result == JOptionPane.OK_OPTION) {
                     try {
-                        Log.info("trid");
                         remoteService.UserExit(stub);
-                        Log.info("Exit process callled");
                     } catch (RemoteException ex) {
                         Log.error(ex.getMessage());
                     }
@@ -135,15 +148,15 @@ public class WhiteboardGUI extends JFrame {
 
 
 
-        JMenu helpMenu = new JMenu("Help");
-        menuBar.add(helpMenu);
+//        JMenu helpMenu = new JMenu("Help");
+//        menuBar.add(helpMenu);
 
 
         add(menuBar, BorderLayout.NORTH);
 
         Log.action("Creating Canvas");
 
-        canvas = new Canvas(remoteService, identity, userName, boardName, data, chatWindow);
+        canvas = new Canvas(remoteService, identity, userName, boardName, data, chatWindow, props);
 
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
@@ -259,7 +272,7 @@ public class WhiteboardGUI extends JFrame {
             );
 
             int result = chooser.showSaveDialog(this);
-            if (result != JFileChooser.APPROVE_OPTION) return;
+            if (result != APPROVE_OPTION) return;
 
             File chosen = chooser.getSelectedFile();
             if (!chosen.getName().toLowerCase().endsWith(".json")) {
@@ -273,9 +286,12 @@ public class WhiteboardGUI extends JFrame {
                     this,
                     "Saved to:\n" + chosen.getAbsolutePath(),
                     "Save As",
-                    JOptionPane.INFORMATION_MESSAGE
+                    INFORMATION_MESSAGE
             );
         });
+
+
+
 
         JMenuItem close = new JMenuItem("Close");
         close.addActionListener(_ -> {
@@ -300,6 +316,15 @@ public class WhiteboardGUI extends JFrame {
         });
 
         fileMenu.add(saveAs);
+        fileMenu. add(new JToolBar.Separator());
+        JMenu exportMenu = new JMenu("Export as..");
+        JMenuItem PNG = new JMenuItem("PNG");
+        PNG.addActionListener(e -> exportImage("png"));
+        exportMenu.add(PNG);
+        JMenuItem PDF = new JMenuItem("PDF");
+        PDF.addActionListener(e -> SaveAsPDF());
+        exportMenu.add(PDF);
+        fileMenu.add(exportMenu);
         fileMenu.add(new JToolBar.Separator());
         fileMenu.add(close);
         menuBar.add(fileMenu);
@@ -358,7 +383,7 @@ public class WhiteboardGUI extends JFrame {
                                         table,
                                         "Failed to kick user:\n" + ex.getMessage(),
                                         "Error",
-                                        JOptionPane.ERROR_MESSAGE
+                                        ERROR_MESSAGE
                                 );
                             }
                         });
@@ -391,6 +416,79 @@ public class WhiteboardGUI extends JFrame {
 
     public void SetStub(UpdateHandler stub) {
         this.stub = stub;
+    }
+
+
+
+
+    private void exportImage(String fmt) {
+        JFileChooser chooser = new JFileChooser(exportPath);
+        chooser.setFileFilter(new FileNameExtensionFilter(fmt.toUpperCase() + " image", fmt));
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+        File f = chooser.getSelectedFile();
+        if (!f.getName().toLowerCase().endsWith("." + fmt)) {
+            f = new File(f.getParentFile(), f.getName() + "." + fmt);
+        }
+        try {
+            BufferedImage img = snapshotCanvas(canvas);
+            ImageIO.write(img, fmt, f);
+            JOptionPane.showMessageDialog(this,
+                    "Exported to:\n" + f.getAbsolutePath(),
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Export failed:\n" + ex.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public BufferedImage snapshotCanvas(Canvas canvas) {
+        int w = canvas.getWidth() + canvas.offsetX;
+        int h = canvas.getHeight() + canvas.offsetY;
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+
+        canvas.paintAll(g2);
+        g2.dispose();
+        return img;
+    }
+
+
+    public void SaveAsPDF() {
+        JFileChooser chooser = new JFileChooser(exportPath);
+        chooser.setFileFilter(new FileNameExtensionFilter("PDF Document", "pdf"));
+        if (chooser.showSaveDialog(this) != APPROVE_OPTION) return;
+
+        File out = chooser.getSelectedFile();
+        if (!out.getName().toLowerCase().endsWith(".pdf")) {
+            out = new File(out.getParentFile(), out.getName() + ".pdf");
+        }
+
+        BufferedImage img = snapshotCanvas(canvas);
+        try (PDDocument doc = new PDDocument()) {
+            // create a page sized to your canvas
+            PDRectangle rect = new PDRectangle(img.getWidth(), img.getHeight());
+            PDPage page = new PDPage(rect);
+            doc.addPage(page);
+
+            // embed the image
+            PDImageXObject pdImg = LosslessFactory.createFromImage(doc, img);
+            try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                // place at (0,0) lower-left
+                cs.drawImage(pdImg, 0, 0, img.getWidth(), img.getHeight());
+            }
+
+            doc.save(out);
+            JOptionPane.showMessageDialog(this,
+                    "Exported PDF to:\n" + out.getAbsolutePath(),
+                    "Export Successful",
+                    INFORMATION_MESSAGE);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "Failed to write PDF:\n" + ex.getMessage(),
+                    "Export Error",
+                    ERROR_MESSAGE);
+        }
     }
 
 }

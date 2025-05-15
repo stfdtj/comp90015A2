@@ -49,7 +49,8 @@ public class Main {
         frame.setSize(400, 300);
         frame.setLocationRelativeTo(null);
 
-        try {            Image icon = ImageIO.read(new File("src/main/main/resources/whiteboard_icon.png"));
+        try {
+            Image icon = ImageIO.read(new File(props.getProperty("app.icon")));
             frame.setIconImage(icon);
         } catch (IOException e) {
             Log.error(e.getMessage());
@@ -128,28 +129,26 @@ public class Main {
             if (result == JOptionPane.OK_OPTION) {
                 ip = ipField.getText();
                 port = portField.getText();
-            }
+                String username = props.getProperty("user.name");
+                String classpath = System.getProperty("java.class.path");
 
+                String[] cmd = {
+                        "java", "-cp", classpath,
+                        "main.Client",
+                        ip, port, username,
+                };
+                System.out.println("cmd: " + Arrays.toString(cmd));
+                try {
+                    Runtime.getRuntime().exec(cmd);
+                    frame.setState(Frame.ICONIFIED);
+                    frame.dispose();
+                } catch (IOException ex) {
+                    Log.error(ex.getMessage());
+                }
 
-            String username = props.getProperty("user.name");
-            String classpath = System.getProperty("java.class.path");
-
-            String[] cmd = {
-                    "java", "-cp", classpath,
-                    "main.Client",
-                    ip, port, username,
-            };
-            System.out.println("cmd: " + Arrays.toString(cmd));
-            try {
-                Runtime.getRuntime().exec(cmd);
                 frame.setState(Frame.ICONIFIED);
                 frame.dispose();
-            } catch (IOException ex) {
-                Log.error(ex.getMessage());
             }
-
-            frame.setState(Frame.ICONIFIED);
-            frame.dispose();
         });
 
         return panel;

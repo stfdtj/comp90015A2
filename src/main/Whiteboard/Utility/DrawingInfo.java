@@ -5,7 +5,7 @@ import Whiteboard.DrawingMode;
 import java.awt.*;
 import java.io.Serializable;
 
-public class DrawingInfo implements Serializable {
+public class DrawingInfo extends Drawings implements Serializable {
     private final Point start;
     private final Point end;
     private final Color color;

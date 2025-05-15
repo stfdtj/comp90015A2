@@ -14,14 +14,14 @@ import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Properties;
 
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 
-    private Image pencil = new ImageIcon("src/main/Whiteboard/resources/pencil.png").getImage();
-    private Image rubber = new ImageIcon("src/main/Whiteboard/resources/rubber.png").getImage();
-    private Image text = new ImageIcon("src/main/Whiteboard/resources/text.png").getImage();
+    private Image pencil;
+    private Image rubber;
+    private Image text;
 
 
 
@@ -47,6 +47,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private Color currColor = Color.BLACK;
     private final Color backgroundColor = Color.WHITE;
     private float thickness = 3;
+    JLabel iconLabel;
     private static Rectangle textBoxLocation;
     private static ArrayList<RemoteUser> clients;
     RemoteUser me;
@@ -60,12 +61,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     private final WhiteboardData data;
 
-
-
     private final WhiteboardFunctions remoteService;
 
+    private final ArrayList<Drawings> drawings = new ArrayList<>();
+
     public Canvas(WhiteboardFunctions service, boolean identity, String username, String boardName,
-                  WhiteboardData saved, ChatWindow win) {
+                  WhiteboardData saved, ChatWindow win, Properties props) {
         this.remoteService = service;
         this.identity = identity;
         this.username = username;
@@ -75,6 +76,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         data = saved;
         allocate();
         repaint();
+        pencil = new ImageIcon(props.getProperty("app.icon.pencil")).getImage();
+        rubber = new ImageIcon(props.getProperty("app.icon.rubber")).getImage();
+        text = new ImageIcon(props.getProperty("app.icon.text")).getImage();
 
         // scale
         pencil = pencil.getScaledInstance(24, 24, Image.SCALE_SMOOTH);
@@ -128,6 +132,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             info = new DrawingInfo(start, end, currColor, mode, thickness);
 
             shapes.add(info);
+            drawings.add(info);
 
             try {
                 if (identity) {
@@ -141,7 +146,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             }
         } else {
             texts.add(textInfo);
-
+            drawings.add(textInfo);
             try {
                 if (identity) {
                     remoteService.BroadCastText(textInfo);
@@ -218,7 +223,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
                 continue;
             }
             g2.setColor(info.getColor());
-            g2.setStroke(new BasicStroke(info.getThickness()));
+            if (info.getDrawingMode().equals(DrawingMode.FREE)) {
+                g2.setStroke(new BasicStroke(
+                        info.getThickness(),
+                        BasicStroke.CAP_ROUND,
+                        BasicStroke.JOIN_ROUND
+                ));
+            } else {
+                g2.setStroke(new BasicStroke(info.getThickness()));
+            }
+
             Shape shape = CreateShape(info.getDrawingMode(), info.getStart(), info.getEnd());
             g2.draw(shape);
         }
@@ -509,7 +523,9 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         JPanel colorPanel = new JPanel();
         colorPanel.setBorder(BorderFactory.createTitledBorder("Colors"));
         colorPanel.setBackground(new Color(243,243,243,255));
-        Color[] palette = {Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.CYAN};
+        Color[] palette = {Color.BLACK, Color.RED, Color.GREEN, Color.BLUE, Color.MAGENTA, Color.YELLOW, Color.CYAN,
+                Color.PINK, Color.GRAY, new Color(207, 159, 255), Color.WHITE, Color.ORANGE, new Color(0, 79, 45),
+                new Color(145, 174, 193), new Color(93, 63, 211), new Color(114, 47, 55)};
 
         // current color display
         JColorChooser colorChooser = new JColorChooser();
@@ -558,8 +574,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         sliderPanel.setFocusable(false);
 
         // icon at top
-        ImageIcon icon = new ImageIcon(pencil.getScaledInstance(15, 15, Image.SCALE_SMOOTH));
-        JLabel iconLabel = new JLabel(icon);
+        // ImageIcon icon = new ImageIcon(pencil.getScaledInstance(15, 15, Image.SCALE_SMOOTH));
+        iconLabel = new JLabel(String.valueOf(thickness));
         iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
         iconLabel.setFocusable(Boolean.FALSE);
         sliderPanel.add(iconLabel, BorderLayout.NORTH);
@@ -574,7 +590,10 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         slider.setFocusable(false);
         slider.setBackground(new Color(243,243,243,255));
 
-        slider.addChangeListener(_ -> thickness = slider.getValue());
+        slider.addChangeListener(e -> {
+            thickness = slider.getValue();
+            iconLabel.setText(String.valueOf(thickness));
+        });
 
         sliderPanel.add(slider, BorderLayout.CENTER);
         return sliderPanel;
@@ -703,6 +722,18 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         } catch (RemoteException e) {
             Log.error(e.getMessage());
         }
+    }
+
+    public void Undo() {
+        Drawings item = drawings.getLast();
+        for (Drawings d : drawings) {
+            if (d instanceof TextInfo) {
+                texts.remove(d);
+            } else if (d instanceof DrawingInfo) {
+                shapes.remove(d);
+            }
+        }
+        drawings.remove(item);
     }
 
 }

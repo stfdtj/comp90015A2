@@ -5,7 +5,7 @@ import Whiteboard.DrawingMode;
 import java.awt.*;
 import java.io.Serializable;
 
-public class TextInfo implements Serializable {
+public class TextInfo extends Drawings implements Serializable {
 
     private String text;
     private Color color;
