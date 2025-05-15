@@ -1,15 +1,19 @@
 package Whiteboard.Utility;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Properties;
 
 public class Log {
 
-    private static final String LOG_DIR = "src/main/Whiteboard/resources";
+    private static final Properties props = new Properties();
+
+
     private static final String LOG_BASENAME = "board";
     private static final DateTimeFormatter FILE_TS_FMT =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
@@ -18,10 +22,17 @@ public class Log {
 
 
     private static final Path logPath;
-    private static PrintWriter writer;
+    private static final PrintWriter writer;
+
 
     static {
         try {
+            try (FileReader reader = new FileReader("src/main/main/resources/config.properties")) {
+                props.load(reader);
+            } catch (IOException ex) {
+                Log.error(ex.getMessage());
+            }
+            String LOG_DIR = props.getProperty("app.log.path");
             Files.createDirectories(Paths.get(LOG_DIR));
 
             String ts = LocalDateTime.now().format(FILE_TS_FMT);
@@ -34,7 +45,7 @@ public class Log {
                             logPath,
                             StandardCharsets.UTF_8,
                             StandardOpenOption.APPEND),
-                    /* autoFlush= */ true
+                    true
             );
         } catch (IOException e) {
             throw new ExceptionInInitializerError("Failed to init Log: " + e);
@@ -49,7 +60,6 @@ public class Log {
         String now = LocalDateTime.now().format(LINE_TS_FMT);
         String line = String.format("[%s] [%s] %s", level, now, msg);
 
-        // always echo to console
         System.out.println(line);
 
         // then write to file

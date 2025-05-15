@@ -3,7 +3,6 @@ package main;
 
 
 import Whiteboard.Utility.Log;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -116,8 +115,8 @@ public class Main {
         // join someone as client
         joinBtn.addActionListener(_ -> {
             // ip, port, username
-            String ip = "";
-            String port = "";
+            String ip;
+            String port;
             // dialog window
             Form form = new Form(frame, "Join Someone's Whiteboard");
             JTextField ipField = new JTextField(25);
@@ -175,23 +174,52 @@ public class Main {
         form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
         JLabel name = new JLabel("Username:  ");
         JLabel port = new JLabel("Port:  ");
-        // load property
+        JLabel export = new JLabel("Export Directory:  ");
+        JLabel saving = new JLabel("Save Directory:  ");
+        JLabel log = new JLabel("Log Directory:  ");
+
         String username = props.getProperty("user.name");
         String portNum = props.getProperty("rmi.port");
+        String exportPath = props.getProperty("user.export");
+        String logPath = props.getProperty("app.log.path");
+        String savePath = props.getProperty("app.data");
+
         JTextField usernameField = new JTextField(20);
         usernameField.setAlignmentX(Component.CENTER_ALIGNMENT);
         usernameField.setMaximumSize(usernameField.getPreferredSize());
+        usernameField.setText(username);
+
         JTextField portField = new JTextField(5);
         portField.setAlignmentX(Component.CENTER_ALIGNMENT);
         portField.setMaximumSize(portField.getPreferredSize());
-
-
-        usernameField.setText(username);
         portField.setText(portNum);
+
+        JTextField exportPathField = new JTextField(100);
+        exportPathField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        exportPathField.setMaximumSize(exportPathField.getPreferredSize());
+        exportPathField.setText(exportPath);
+
+        JTextField savePathField = new JTextField(100);
+        savePathField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        savePathField.setMaximumSize(savePathField.getPreferredSize());
+        savePathField.setText(savePath);
+
+        JTextField logPathField = new JTextField(100);
+        logPathField.setAlignmentX(Component.CENTER_ALIGNMENT);
+        logPathField.setMaximumSize(logPathField.getPreferredSize());
+        logPathField.setText(logPath);
+
         form.add(name);
         form.add(usernameField);
         form.add(port);
         form.add(portField);
+        form.add(export);
+        form.add(exportPathField);
+        form.add(saving);
+        form.add(savePathField);
+        form.add(log);
+        form.add(logPathField);
+
 
         settingsPanel.add(form, BorderLayout.CENTER);
 
@@ -201,8 +229,14 @@ public class Main {
         save.addActionListener(_ -> {
             String user = usernameField.getText();
             String pNum = portField.getText();
+            String exportDir = exportPathField.getText();
+            String logDir = logPathField.getText();
+            String saveDir = savePathField.getText();
             props.setProperty("user.name", user);
             props.setProperty("rmi.port", pNum);
+            props.setProperty("app.log.path", exportDir);
+            props.setProperty("app.data", saveDir);
+            props.setProperty("app.log.path", logDir);
 
             FileOutputStream out;
             try {
@@ -236,7 +270,7 @@ public class Main {
     }
 
     public static void CreateNewProgram(Frame frame, Properties props) {
-        // identity, username, boardname, port
+        // identity, username, boardName, port
 
         String boardName = "blank";
         String port = props.getProperty("rmi.port");

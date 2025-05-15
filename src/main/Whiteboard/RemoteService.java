@@ -1,7 +1,6 @@
 package Whiteboard;
 
 import Whiteboard.Utility.*;
-import main.Form;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,37 +39,12 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
             client.NotifyRefuse();
             return false;
         }
-
-
-        for (DrawingInfo info: canvas.getDrawingInfo()) {
-            BroadcastDrawing(info);
-        }
-
-        for (TextInfo info: canvas.getTextInfo()) {
-            BroadCastText(info);
+        for (Drawings drawing: canvas.getDrawingInfo()) {
+            BroadcastDrawing(drawing);
         }
         return true;
     }
 
-
-    @Override
-    public void BroadCastText(TextInfo info) throws RemoteException {
-        for (UpdateHandler client : clients) {
-            try {
-                client.receiveDrawing(null, info);
-            } catch (RemoteException e) {
-                Log.error(e.getMessage());
-            } catch (RuntimeException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    @Override
-    public void SendText(TextInfo info) throws RemoteException {
-        canvas.SendRemoteShape(null, info);
-        BroadCastText(info);
-    }
 
 
     // very simple id
@@ -90,7 +64,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     @Override
     public void UpdateCursor(Point p, int id) throws RemoteException {
-        users.get(id - 1).cusorPosition = p;
+        users.get(id - 1).cursorPosition = p;
 
         for (UpdateHandler client : clients) {
             client.receiveCursorUpdate(users);
@@ -102,10 +76,10 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     }
 
     @Override
-    public void BroadcastDrawing(DrawingInfo info) throws RemoteException {
+    public void BroadcastDrawing(Drawings d) throws RemoteException {
         for (UpdateHandler client : clients) {
             try {
-                client.receiveDrawing(info, null);
+                client.receiveDrawing(d);
             } catch (RemoteException e) {
                 Log.error(e.getMessage());
             } catch (RuntimeException e) {
@@ -116,9 +90,9 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     // after send drawings to server should send drawings to every client
     @Override
-    public void SendDrawings(DrawingInfo info) throws RemoteException {
-        canvas.SendRemoteShape(info, null);
-        BroadcastDrawing(info);
+    public void SendDrawings(Drawings d) throws RemoteException {
+        canvas.SendRemoteShape(d);
+        BroadcastDrawing(d);
     }
 
     public void SetCanvas(Canvas canvas) {
@@ -177,7 +151,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         clients.removeIf(c -> c.equals(handler));
 
         kicked.status = "KICKED";
-        kicked.cusorPosition = null;
+        kicked.cursorPosition = null;
 
     }
 
@@ -194,7 +168,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         for (RemoteUser u : users) {
             if (u.getUpdateHandler().equals(stub)) {
                 u.status = "OFFLINE";
-                u.cusorPosition = null;
+                u.cursorPosition = null;
                 u.SetUpdateHandler(null);
             }
         }

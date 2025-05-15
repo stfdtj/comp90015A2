@@ -2,8 +2,6 @@ package Whiteboard.Utility;
 
 import Whiteboard.Canvas;
 import Whiteboard.DrawingMode;
-import Whiteboard.WhiteboardGUI;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,9 +19,16 @@ public class KeyBindingManager {
         } catch (RuntimeException e) {
             Log.error(e.getMessage());
         }
+        int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+
+
 
         // text
-        im.put(KeyStroke.getKeyStroke("T"), "switchToTextMode");
+        KeyStroke textKey = KeyStroke.getKeyStroke(KeyEvent.VK_T, menuMask);
+
+        assert im != null;
+        im.put(textKey, "switchToTextMode");
+        assert am != null;
         am.put("switchToTextMode", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -32,7 +37,9 @@ public class KeyBindingManager {
             }
         });
 
-        im.put(KeyStroke.getKeyStroke("E"), "switchToEraser");
+        KeyStroke eraserKey = KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask);
+
+        im.put(eraserKey, "switchToEraser");
         am.put("switchToEraser", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -42,16 +49,14 @@ public class KeyBindingManager {
         });
 
         // saving
-        int menuMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+
         KeyStroke saveKey = KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask);
 
         im.put(saveKey, "saveBoard");
         am.put("saveBoard", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // call your save routine
                 canvas.Saving(null);
-                // if you want a little user feedback:
                 JOptionPane.showMessageDialog(
                         canvas,
                         "Whiteboard saved.",

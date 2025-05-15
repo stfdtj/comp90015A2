@@ -1,18 +1,16 @@
 package Whiteboard.Utility;
 
-import Whiteboard.WhiteboardFunctions;
 import Whiteboard.WhiteboardGUI;
-
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.rmi.RemoteException;
-import java.util.Map;
+
 
 public class ChatWindow {
 
     public JFrame frame;
-    private JTextArea messageDisplay;
+    private final JTextArea messageDisplay;
 
     public ChatWindow(String name, WhiteboardGUI whiteboardGUI) {
         frame = new JFrame();
@@ -47,7 +45,6 @@ public class ChatWindow {
         JButton sendButton = new JButton("Send");
         sendButton.addActionListener(_ -> {
             String message = messageInput.getText();
-            // messageDisplay.append(name + ": " + message + "\n");
             try {
                 String sending = name + ": " + message + "\n";
                 whiteboardGUI.remoteService.BroadCastMessage(sending);

@@ -2,9 +2,7 @@ package Whiteboard.Utility;
 
 import Whiteboard.Canvas;
 import Whiteboard.DrawingMode;
-
 import javax.swing.*;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -17,16 +15,14 @@ public class TextEditor {
     private float size = 12;
     private boolean bold = false;
     private boolean italic = false;
-    private boolean underline = false;
     private Font font = new Font("Arial", Font.PLAIN, 12);
     private Point location;
     private JTextArea textPane;
     private JScrollPane scroll;
-    private Canvas canvas;
+    private final Canvas canvas;
     public JToolBar textFormatBar;
     private JComboBox<String> fontFamilyCombo;
     private JComboBox<Integer> fontSizeCombo;
-    private JToggleButton boldBtn, italicBtn;
 
     public TextEditor(Canvas canvas) {
         this.canvas = canvas;
@@ -42,7 +38,7 @@ public class TextEditor {
         int height = (int) Math.abs(start.getY() - end.getY());
         int width = (int) Math.abs(start.getX() - end.getX());
         textPane.setPreferredSize(new Dimension(width, height));
-        textPane.setText("Type something...");
+        textPane.setText(currentText);
 
         scroll = new JScrollPane(textPane);
         scroll.setBounds(start.x, start.y, width, height);
@@ -103,7 +99,7 @@ public class TextEditor {
                         .getAvailableFontFamilyNames();
         fontFamilyCombo = new JComboBox<>(fonts);
         fontFamilyCombo.setSelectedItem("Arial");
-        fontFamilyCombo.addActionListener(e -> {
+        fontFamilyCombo.addActionListener(_ -> {
             this.font = new Font((String)fontFamilyCombo.getSelectedItem(), Font.PLAIN,
                     (Integer)fontSizeCombo.getSelectedItem());
             if (textPane != null) {
@@ -118,7 +114,7 @@ public class TextEditor {
         Integer[] sizes = {8,10,12,14,18,24,36,48};
         fontSizeCombo = new JComboBox<>(sizes);
         fontSizeCombo.setSelectedItem(12);
-        fontSizeCombo.addActionListener(e -> {
+        fontSizeCombo.addActionListener(_ -> {
             this.size = ((Integer)fontSizeCombo.getSelectedItem());
             if (textPane != null) {
                 this.font = new Font(this.font.getFontName(), Font.PLAIN,
@@ -130,10 +126,10 @@ public class TextEditor {
         textFormatBar.add(fontSizeCombo);
 
 
-        boldBtn = new JToggleButton("B");
+        JToggleButton boldBtn = new JToggleButton("B");
         boldBtn.setFont(boldBtn.getFont().deriveFont(Font.BOLD));
         boldBtn.setSize(new Dimension(24, 24));
-        boldBtn.addActionListener(e -> {
+        boldBtn.addActionListener(_ -> {
             if (textPane != null) {
                 if (bold) {
                     bold = false;
@@ -149,10 +145,10 @@ public class TextEditor {
         });
         textFormatBar.add(boldBtn);
 
-        italicBtn = new JToggleButton("I");
+        JToggleButton italicBtn = new JToggleButton("I");
         italicBtn.setFont(italicBtn.getFont().deriveFont(Font.ITALIC));
         italicBtn.setSize(new Dimension(24, 24));
-        italicBtn.addActionListener(e -> {
+        italicBtn.addActionListener(_ -> {
             if (textPane != null) {
                 if (italic) {
                     italic = false;

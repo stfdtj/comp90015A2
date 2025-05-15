@@ -12,14 +12,10 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
@@ -28,7 +24,6 @@ import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Properties;
-
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
@@ -43,7 +38,7 @@ public class WhiteboardGUI extends JFrame {
     private final Properties props;
     public ChatWindow chatWindow;
     private UpdateHandler stub = null;
-    private String exportPath = null;
+    private final String exportPath;
 
 
 
@@ -58,6 +53,7 @@ public class WhiteboardGUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // load or create new board
         if (d != null) {
             this.data = d;
         } else {
@@ -68,7 +64,7 @@ public class WhiteboardGUI extends JFrame {
 
         this.remoteService = remoteService;
 
-
+        // load property
         props = new Properties();
         try (FileReader reader = new FileReader(Main.getPath())) {
             props.load(reader);
@@ -76,6 +72,7 @@ public class WhiteboardGUI extends JFrame {
             Log.error(ex.getMessage());
         }
 
+        // set icon
         try {
             Image icon = ImageIO.read(new File(props.getProperty("app.icon")));
             this.setIconImage(icon);
@@ -85,7 +82,7 @@ public class WhiteboardGUI extends JFrame {
 
         exportPath = props.getProperty("user.export");
 
-
+        // creating..
         JPanel titleBar = new JPanel();
         titleBar.setBackground(new Color(255, 245, 190));
         titleBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -98,12 +95,11 @@ public class WhiteboardGUI extends JFrame {
 
         menuBar.setBackground(new Color(255,182,185,255));
         // some options should not be visible to clients
-        Log.info("Try loading property");
         if (identity) {
             // component1, server options
             ServerFuncListener();
         }
-        Log.info("Property Loaded");
+
         // server can quit from file menu
         if (!identity) {
             // component2, client exit
@@ -129,9 +125,6 @@ public class WhiteboardGUI extends JFrame {
             menuBar.add(exit);
         }
 
-
-        JMenu settings = new JMenu("Settings");
-        menuBar.add(settings);
         JMenu chat = new JMenu("Chat");
         JMenuItem openChat = new JMenuItem("Open Chat");
         openChat.addActionListener(_ -> {
@@ -147,16 +140,11 @@ public class WhiteboardGUI extends JFrame {
         menuBar.add(chat);
 
 
-
-//        JMenu helpMenu = new JMenu("Help");
-//        menuBar.add(helpMenu);
-
-
         add(menuBar, BorderLayout.NORTH);
 
         Log.action("Creating Canvas");
 
-        canvas = new Canvas(remoteService, identity, userName, boardName, data, chatWindow, props);
+        canvas = new Canvas(remoteService, userName, boardName, data, chatWindow, props);
 
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
@@ -181,33 +169,13 @@ public class WhiteboardGUI extends JFrame {
     }
 
 
-    private void addHoverEffect(JButton button) {
-        // button.setForeground(normalColor); // initial color
-
-        button.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                button.setForeground(Color.BLACK);
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                button.setForeground(Color.WHITE);
-            }
-        });
-    }
-
     public boolean NewJoinApplication() {
         Form form = new Form(this, "Application of Join in");
         form.addRow("A new user wants to join your whiteboard", new JLabel());
         form.addButton("OK", JOptionPane.OK_OPTION);
         form.addButton("Cancel", JOptionPane.CANCEL_OPTION);
         int result = form.showDialog();
-        if (result == JOptionPane.OK_OPTION) {
-            return true;
-        } else {
-            return false;
-        }
+        return result == JOptionPane.OK_OPTION;
     }
 
     public boolean RefuseNotice() {
@@ -257,7 +225,50 @@ public class WhiteboardGUI extends JFrame {
         fileMenu.add(save);
 
 
+        JMenuItem saveAs = getSaveAs();
 
+
+        JMenuItem close = new JMenuItem("Close");
+        close.addActionListener(_ -> {
+            Form form = new Form(this, "Close");
+            form.addRow("Save current Whiteboard before quitting?", new JLabel());
+            form.addButton("OK", JOptionPane.OK_OPTION)
+                    .addButton("Cancel", JOptionPane.CANCEL_OPTION);
+            int result = form.showDialog();
+            if (result == JOptionPane.OK_OPTION) {
+                // should check
+                canvas.Saving(null);
+                // notify all users the server is shutdown
+                try {
+                    remoteService.NotifyServerShutDown();
+                } catch (RemoteException e) {
+                    Log.error(e.getMessage());
+                }
+                System.exit(0);
+            } else {
+                System.exit(0);
+            }
+        });
+
+        fileMenu.add(saveAs);
+        fileMenu. add(new JToolBar.Separator());
+        JMenu exportMenu = new JMenu("Export as..");
+        JMenuItem PNG = new JMenuItem("PNG");
+        PNG.addActionListener(_ -> exportImage());
+        exportMenu.add(PNG);
+        JMenuItem PDF = new JMenuItem("PDF");
+        PDF.addActionListener(_ -> SaveAsPDF());
+        exportMenu.add(PDF);
+        fileMenu.add(exportMenu);
+        fileMenu.add(new JToolBar.Separator());
+        fileMenu.add(close);
+        menuBar.add(fileMenu);
+
+        JMenu manageClients = getManageClients();
+        menuBar.add(manageClients);
+    }
+
+    private JMenuItem getSaveAs() {
         JMenuItem saveAs = new JMenuItem("Save As...");
         saveAs.addActionListener(_ -> {
             File saveDir = new File("src/main/main/resources/SavedWhiteBoards");
@@ -289,46 +300,10 @@ public class WhiteboardGUI extends JFrame {
                     INFORMATION_MESSAGE
             );
         });
+        return saveAs;
+    }
 
-
-
-
-        JMenuItem close = new JMenuItem("Close");
-        close.addActionListener(_ -> {
-            Form form = new Form(this, "Close");
-            form.addRow("Save current Whiteboard before quitting?", new JLabel());
-            form.addButton("OK", JOptionPane.OK_OPTION)
-                    .addButton("Cancel", JOptionPane.CANCEL_OPTION);
-            int result = form.showDialog();
-            if (result == JOptionPane.OK_OPTION) {
-                // should check
-                canvas.Saving(null);
-                // notify all users the server is shutdown
-                try {
-                    remoteService.NotifyServerShutDown();
-                } catch (RemoteException e) {
-                    Log.error(e.getMessage());
-                }
-                System.exit(0);
-            } else {
-                System.exit(0);
-            }
-        });
-
-        fileMenu.add(saveAs);
-        fileMenu. add(new JToolBar.Separator());
-        JMenu exportMenu = new JMenu("Export as..");
-        JMenuItem PNG = new JMenuItem("PNG");
-        PNG.addActionListener(e -> exportImage("png"));
-        exportMenu.add(PNG);
-        JMenuItem PDF = new JMenuItem("PDF");
-        PDF.addActionListener(e -> SaveAsPDF());
-        exportMenu.add(PDF);
-        fileMenu.add(exportMenu);
-        fileMenu.add(new JToolBar.Separator());
-        fileMenu.add(close);
-        menuBar.add(fileMenu);
-
+    private JMenu getManageClients() {
         JMenu manageClients = new JMenu("Manage Clients");
         JMenuItem ipAndPort = new JMenuItem("IP and Port");
         ipAndPort.addActionListener(_ -> {
@@ -370,10 +345,10 @@ public class WhiteboardGUI extends JFrame {
                     grid.add(new JLabel(user.username, SwingConstants.CENTER));
                     grid.add(new JLabel(String.valueOf(user.id), SwingConstants.CENTER));
                     grid.add(new JLabel(user.ip, SwingConstants.CENTER));
-                    grid.add(new JLabel(user.status.toString(), SwingConstants.CENTER));
+                    grid.add(new JLabel(user.status, SwingConstants.CENTER));
                     if (user.id != 1) {
                         JButton kick = new JButton("Kick");
-                        kick.addActionListener(e2 -> {
+                        kick.addActionListener(_ -> {
                             try {
                                 remoteService.KickUser(user.id);
                                 Log.info("User " + user.id + " kicked");
@@ -411,7 +386,7 @@ public class WhiteboardGUI extends JFrame {
 
         });
         manageClients.add(manage);
-        menuBar.add(manageClients);
+        return manageClients;
     }
 
     public void SetStub(UpdateHandler stub) {
@@ -419,19 +394,17 @@ public class WhiteboardGUI extends JFrame {
     }
 
 
-
-
-    private void exportImage(String fmt) {
+    private void exportImage() {
         JFileChooser chooser = new JFileChooser(exportPath);
-        chooser.setFileFilter(new FileNameExtensionFilter(fmt.toUpperCase() + " image", fmt));
+        chooser.setFileFilter(new FileNameExtensionFilter("png".toUpperCase() + " image", "png"));
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
         File f = chooser.getSelectedFile();
-        if (!f.getName().toLowerCase().endsWith("." + fmt)) {
-            f = new File(f.getParentFile(), f.getName() + "." + fmt);
+        if (!f.getName().toLowerCase().endsWith("." + "png")) {
+            f = new File(f.getParentFile(), f.getName() + "." + "png");
         }
         try {
             BufferedImage img = snapshotCanvas(canvas);
-            ImageIO.write(img, fmt, f);
+            ImageIO.write(img, "png", f);
             JOptionPane.showMessageDialog(this,
                     "Exported to:\n" + f.getAbsolutePath(),
                     "Success", JOptionPane.INFORMATION_MESSAGE);

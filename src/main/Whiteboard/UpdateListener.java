@@ -1,9 +1,6 @@
 package Whiteboard;
 
-import Whiteboard.Utility.DrawingInfo;
-import Whiteboard.Utility.Log;
-import Whiteboard.Utility.RemoteUser;
-import Whiteboard.Utility.TextInfo;
+import Whiteboard.Utility.*;
 
 import javax.swing.*;
 import java.rmi.RemoteException;
@@ -12,15 +9,13 @@ import java.util.ArrayList;
 
 public class UpdateListener extends UnicastRemoteObject implements UpdateHandler {
 
-    private Canvas canvas;
+    private final Canvas canvas;
     private WhiteboardGUI whiteboardGUI;
 
     @Override
-    public void receiveDrawing(DrawingInfo info, TextInfo textInfo) throws RemoteException {
+    public void receiveDrawing(Drawings d) throws RemoteException {
 
-        SwingUtilities.invokeLater(() -> {
-            canvas.ReceiveRemoteShape(info, textInfo);
-        });
+        SwingUtilities.invokeLater(() -> canvas.ReceiveRemoteShape(d));
     }
 
     @Override

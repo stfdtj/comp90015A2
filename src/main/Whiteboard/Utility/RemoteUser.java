@@ -1,8 +1,6 @@
 package Whiteboard.Utility;
 
 import Whiteboard.UpdateHandler;
-import Whiteboard.UpdateListener;
-
 import java.awt.*;
 import java.io.Serializable;
 import java.util.Random;
@@ -11,7 +9,7 @@ public class RemoteUser implements Serializable {
 
     public int id;
     public String username;
-    public Point cusorPosition;
+    public Point cursorPosition;
     public String status = "ONLINE";
     public Color color;
     private UpdateHandler updateHandler;
@@ -19,7 +17,7 @@ public class RemoteUser implements Serializable {
 
     public RemoteUser(String username, Point cursorPosition) {
         this.username = username;
-        this.cusorPosition = cursorPosition;
+        this.cursorPosition = cursorPosition;
         Random rnd = new Random();
         int r = rnd.nextInt(210);
         int g = rnd.nextInt(210);

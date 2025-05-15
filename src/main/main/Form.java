@@ -13,14 +13,14 @@ public class Form {
 
     public Form(Window owner, String title) {
         dialog = new JDialog(owner, title, Dialog.ModalityType.APPLICATION_MODAL);
-        form   = new JPanel(new GridBagLayout());
+        form = new JPanel(new GridBagLayout());
         buttonBar = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
         // shared constraints for form rows
         gbc = new GridBagConstraints();
         gbc.insets = new Insets(5,5,5,5);
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.fill   = GridBagConstraints.HORIZONTAL;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx= 1.0;
 
         dialog.getContentPane().setLayout(new BorderLayout(10,10));
@@ -46,7 +46,7 @@ public class Form {
 
     public Form addButton(String text, int returnValue) {
         JButton btn = new JButton(text);
-        btn.addActionListener(e -> {
+        btn.addActionListener(_ -> {
             result = returnValue;
             dialog.setVisible(false);
         });

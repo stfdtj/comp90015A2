@@ -1,8 +1,5 @@
 package Whiteboard;
 
-import Whiteboard.Utility.Log;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;

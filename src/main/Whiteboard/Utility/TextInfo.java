@@ -7,14 +7,14 @@ import java.io.Serializable;
 
 public class TextInfo extends Drawings implements Serializable {
 
-    private String text;
-    private Color color;
+    private final String text;
+    private final Color color;
     public DrawingMode drawingMode;
-    private float size;
-    private boolean bold = false;
-    private boolean italic = false;
-    private Font font;
-    private Point location;
+    private final float size;
+    private final boolean bold;
+    private final boolean italic;
+    private final Font font;
+    private final Point location;
 
     public TextInfo(String text, Color color, DrawingMode dm, float size, boolean bold, boolean italic,
                      Font font, Point location) {
