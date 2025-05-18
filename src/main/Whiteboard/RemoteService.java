@@ -29,8 +29,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
             clients.add(client);
             users.get(numUsers - 1).SetUpdateHandler(client);
             try {
-                String clientHost = RemoteServer.getClientHost();
-                users.get(numUsers - 1).ip = clientHost;
+                users.get(numUsers - 1).ip = RemoteServer.getClientHost();
             } catch (ServerNotActiveException e) {
                 throw new RuntimeException(e);
             }
@@ -88,13 +87,6 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
         }
     }
 
-    // after send drawings to server should send drawings to every client
-    @Override
-    public void SendDrawings(Drawings d) throws RemoteException {
-        canvas.SendRemoteShape(d);
-        BroadcastDrawing(d);
-    }
-
     public void SetCanvas(Canvas canvas) {
         this.canvas = canvas;
     }
@@ -114,7 +106,7 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
 
     @Override
     public void SetWhiteboardGUI(WhiteboardGUI gui) throws RemoteException {
-        this.whiteboardGUI = gui;
+        whiteboardGUI = gui;
     }
 
     @Override
@@ -166,12 +158,14 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
     public void UserExit(UpdateHandler stub) throws RemoteException {
         Log.info("remote service called");
         for (RemoteUser u : users) {
-            if (u.getUpdateHandler().equals(stub)) {
+            if (stub.equals(u.getUpdateHandler())) {
                 u.status = "OFFLINE";
-                u.cursorPosition = null;
+                u.cursorPosition  = null;
                 u.SetUpdateHandler(null);
+                break;
             }
         }
+
         Iterator<UpdateHandler> it = clients.iterator();
         while (it.hasNext()) {
             if (it.next().equals(stub)) {
@@ -180,6 +174,32 @@ public class RemoteService extends UnicastRemoteObject implements WhiteboardFunc
             }
         }
         Log.info("remote service finished");
+    }
+
+    @Override
+    public void ClientSendDrawing(Drawings d) throws RemoteException {
+        canvas.ReceiveRemoteShape(d);
+        BroadcastDrawing(d);
+    }
+
+    @Override
+    public void BroadCastRemoving(String id) throws RemoteException {
+        Log.info("remote service broadcast removing called");
+        for (UpdateHandler client : clients) {
+            try {
+                Log.info("Sending removal to client: " + client);
+                client.receiveRemoving(id);
+            } catch (RemoteException e) {
+                Log.error("RemoteException while sending to client: " + client);
+            } catch (RuntimeException e) {
+                Log.error("RuntimeException while sending to client: " + client);
+            }
+        }
+    }
+
+    @Override
+    public void ClientSendRemoving(String id) throws RemoteException {
+        canvas.ReceiveRemoving(id);
     }
 
 

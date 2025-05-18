@@ -11,7 +11,6 @@ public interface WhiteboardFunctions extends Remote {
 
     boolean RegisterClient(UpdateHandler client) throws RemoteException;
     void BroadcastDrawing(Drawings d) throws RemoteException;
-    void SendDrawings(Drawings drawings) throws RemoteException;
     void AddRemoteUser(RemoteUser user) throws RemoteException;
     ArrayList<RemoteUser> getUsers() throws RemoteException;
     void UpdateCursor(Point p, int id) throws RemoteException;
@@ -22,4 +21,7 @@ public interface WhiteboardFunctions extends Remote {
     void KickUser(int id) throws RemoteException;
     void NotifyServerShutDown() throws RemoteException;
     void UserExit(UpdateHandler stub) throws RemoteException;
+    void ClientSendDrawing(Drawings d) throws RemoteException;
+    void BroadCastRemoving(String id) throws RemoteException;
+    void ClientSendRemoving(String id) throws RemoteException;
 }

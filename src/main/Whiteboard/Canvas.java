@@ -10,9 +10,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Properties;
 
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
@@ -36,26 +35,31 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     private Color currColor = Color.BLACK;
     private final Color backgroundColor = Color.WHITE;
     private float thickness = 3;
-    JLabel iconLabel;
+    // to show thickness
+    private JLabel iconLabel;
     private static Rectangle textBoxLocation;
     private static ArrayList<RemoteUser> clients;
-    RemoteUser me;
+    private final RemoteUser me;
     private ChatWindow win;
     private Point cursorPt = null;
-    JButton curr;
+    // the indicator of current colour
+    private JButton curr;
     private JScrollPane scroll;
     private final WhiteboardData data;
     private final WhiteboardFunctions remoteService;
     private ArrayList<Drawings> drawings = new ArrayList<>();
+    private final ArrayList<Drawings> localDrawings = new ArrayList<>();
+    private final boolean identity;
 
 
 
     public Canvas(WhiteboardFunctions service, String username, String boardName,
-                  WhiteboardData saved, ChatWindow win, Properties props) {
+                  WhiteboardData saved, ChatWindow win, Properties props, boolean identity) {
         this.remoteService = service;
         this.boardName = boardName;
         this.setLayout(null);
         this.win = win;
+        this.identity = identity;
         data = saved;
         allocate();
         repaint();
@@ -109,20 +113,27 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     // paint locally and remotely
     public synchronized void AddShapeLocalRemote(Point start, Point end, DrawingMode mode, TextInfo textInfo) {
         if (!(mode == DrawingMode.TEXT)) {
-            DrawingInfo info;
+            Drawings info;
             info = new DrawingInfo(start, end, currColor, mode, thickness);
-
+            info.id = UUID.randomUUID().toString();
             drawings.add(info);
-
+            localDrawings.add(info);
             try {
-                remoteService.SendDrawings(info);
+                if (identity) {
+                    remoteService.BroadcastDrawing(info);
+                } else {
+                    remoteService.ClientSendDrawing(info);
+                }
+
             } catch (RemoteException ex) {
                 Log.error(ex.toString());
             }
         } else {
+            textInfo.id = UUID.randomUUID().toString();
             drawings.add(textInfo);
+            localDrawings.add(textInfo);
             try {
-                remoteService.SendDrawings(textInfo);
+                remoteService.BroadcastDrawing(textInfo);
             } catch (RemoteException ex) {
                 Log.error(ex.toString());
             }
@@ -130,7 +141,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         this.repaint();
     }
-
 
 
     // client receive drawing from server
@@ -145,19 +155,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
 
     }
-
-    // send drawing to server
-    public synchronized void SendRemoteShape(Drawings d) {
-        try {
-            drawings.add(d);
-            repaint();
-        } catch (RuntimeException e) {
-            Log.error("Remote exception: " + e);
-            throw new RuntimeException(e);
-        }
-    }
-
-
 
     // render the drawn shapes
     // everything drawn before should be translated
@@ -338,10 +335,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         repaint();
     }
 
-
-
     @Override public void mouseClicked(MouseEvent e) {
-
     }
     @Override public void mouseEntered(MouseEvent e) {
     }
@@ -365,7 +359,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             textEditor.textFormatBar.setVisible(false);
         } else if (mode.equals(DrawingMode.TEXT)) {
             this.setForeColor(Color.BLACK);
-            this.SetSlider(1);
+            this.setSlider(1);
             textEditor.textFormatBar.setVisible(true);
         } else {
             this.setForeColor(Color.BLACK);
@@ -536,7 +530,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     // map thickness with slider
-    public void SetSlider(float value) {
+    public void setSlider(float value) {
         slider.setValue((int) value);
     }
 
@@ -599,9 +593,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return drawings;
     }
 
-
-
-
     public void Saving(File path){
         Log.info(offsetX+" "+offsetY+" "+canvasHeight+" "+canvasWidth+" "+boardName+" ");
         data.setOffSetX(offsetX);
@@ -618,6 +609,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         return scroll;
     }
 
+    // assign data to each variable
     public void allocate() {
         try {
             boardName = data.getBoardName();
@@ -656,8 +648,47 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     }
 
     public void Undo() {
-        Drawings item = drawings.getLast();
+        if (localDrawings == null || localDrawings.isEmpty()) {
+            return;
+        }
+        Drawings item = localDrawings.getLast();
+        Log.info(item.toString());
         drawings.remove(item);
+        localDrawings.remove(item);
+        try {
+            remoteService.BroadCastRemoving(item.id);
+            if (!identity) {
+                remoteService.ClientSendRemoving(item.id);
+            }
+            Log.info("BroadCastRemoving "+item.id);
+        } catch (RemoteException e) {
+            Log.error(e.getMessage());
+        }
+        repaint();
     }
+
+    public void ReceiveRemoving(String id) {
+        if(identity){
+            Log.info(" Server Receive removing "+id);
+        }
+        Log.info("RemoteRemoving called with id: " + id);
+        if (drawings == null) {
+            Log.error("drawings is null");
+            return;
+        }
+
+        for (Drawings drawing : drawings) {
+            if (drawing == null || drawing.id == null) {
+                Log.info("Skipping drawing with null id");
+                continue;
+            }
+            if (drawing.id.equals(id)) {
+                drawings.remove(drawing);
+                return;
+            }
+        }
+        repaint();
+    }
+
 
 }

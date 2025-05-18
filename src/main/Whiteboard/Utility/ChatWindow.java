@@ -3,7 +3,11 @@ package Whiteboard.Utility;
 import Whiteboard.WhiteboardGUI;
 import javax.swing.*;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultEditorKit;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 
 
@@ -53,6 +57,21 @@ public class ChatWindow {
                 Log.error(e.getMessage());
             }
             messageInput.setText("");
+        });
+
+        InputMap im = messageInput.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap am = messageInput.getActionMap();
+
+        // enter to send; shift+enter to add new line
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "send");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK),
+                DefaultEditorKit.insertBreakAction);
+
+        am.put("send", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendButton.doClick();
+            }
         });
 
 

@@ -29,7 +29,7 @@ public class Form {
     }
 
 
-    public Form addRow(String labelText, JComponent comp) {
+    public Form AddRow(String labelText, JComponent comp) {
         // label in column 0
         gbc.gridx = 0; gbc.gridy = row;
         gbc.weightx = 0;
@@ -44,7 +44,7 @@ public class Form {
     }
 
 
-    public Form addButton(String text, int returnValue) {
+    public Form AddButton(String text, int returnValue) {
         JButton btn = new JButton(text);
         btn.addActionListener(_ -> {
             result = returnValue;
@@ -54,7 +54,7 @@ public class Form {
         return this;
     }
 
-    public int showDialog() {
+    public int ShowDialog() {
         dialog.pack();
         dialog.setLocationRelativeTo(dialog.getOwner());
         dialog.setVisible(true);

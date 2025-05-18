@@ -28,10 +28,6 @@ public class TextEditor {
         this.canvas = canvas;
     }
 
-
-
-
-
     public JScrollPane CreateTextBox(Point start, Point end) {
         Log.info("Creating TextBox");
         textPane = new JTextArea();
@@ -67,9 +63,6 @@ public class TextEditor {
 
     }
 
-
-
-    // getter and setter
 
     public void SetColour(Color color) {
         this.color = color;

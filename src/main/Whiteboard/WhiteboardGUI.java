@@ -16,6 +16,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileReader;
@@ -38,7 +40,7 @@ public class WhiteboardGUI extends JFrame {
     private final Properties props;
     public ChatWindow chatWindow;
     private UpdateHandler stub = null;
-    private final String exportPath;
+    private final String EXPORT_PATH;
 
 
 
@@ -49,8 +51,25 @@ public class WhiteboardGUI extends JFrame {
 
         setTitle(boardName);
         setSize(1920, 1080);
-        // override?
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                try {
+                    if (identity) {
+                        remoteService.NotifyServerShutDown();
+                    } else {
+                        // check
+                        remoteService.UserExit(stub);
+                    }
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.exit(0);
+            }
+        });
         setLayout(new BorderLayout());
 
         // load or create new board
@@ -80,7 +99,7 @@ public class WhiteboardGUI extends JFrame {
             Log.error(e.getMessage());
         }
 
-        exportPath = props.getProperty("user.export");
+        EXPORT_PATH = props.getProperty("user.export");
 
         // creating..
         JPanel titleBar = new JPanel();
@@ -108,10 +127,10 @@ public class WhiteboardGUI extends JFrame {
             exit.add(exitItem);
             exitItem.addActionListener(_ -> {
                 Form form = new Form(this, "Exit");
-                form.addRow("Are you sure you want to exit?", new JLabel());
-                form.addButton("OK", JOptionPane.OK_OPTION)
-                        .addButton("Cancel", JOptionPane.CANCEL_OPTION);
-                int result = form.showDialog();
+                form.AddRow("Are you sure you want to exit?", new JLabel());
+                form.AddButton("OK", JOptionPane.OK_OPTION)
+                        .AddButton("Cancel", JOptionPane.CANCEL_OPTION);
+                int result = form.ShowDialog();
                 if (result == JOptionPane.OK_OPTION) {
                     try {
                         remoteService.UserExit(stub);
@@ -139,12 +158,11 @@ public class WhiteboardGUI extends JFrame {
         chat.add(openChat);
         menuBar.add(chat);
 
-
         add(menuBar, BorderLayout.NORTH);
 
         Log.action("Creating Canvas");
 
-        canvas = new Canvas(remoteService, userName, boardName, data, chatWindow, props);
+        canvas = new Canvas(remoteService, userName, boardName, data, chatWindow, props, identity);
 
         JScrollPane canvasScroller = new JScrollPane(canvas);
         add(canvasScroller, BorderLayout.CENTER);
@@ -171,19 +189,19 @@ public class WhiteboardGUI extends JFrame {
 
     public boolean NewJoinApplication() {
         Form form = new Form(this, "Application of Join in");
-        form.addRow("A new user wants to join your whiteboard", new JLabel());
-        form.addButton("OK", JOptionPane.OK_OPTION);
-        form.addButton("Cancel", JOptionPane.CANCEL_OPTION);
-        int result = form.showDialog();
+        form.AddRow("A new user wants to join your whiteboard", new JLabel());
+        form.AddButton("OK", JOptionPane.OK_OPTION);
+        form.AddButton("Cancel", JOptionPane.CANCEL_OPTION);
+        int result = form.ShowDialog();
         return result == JOptionPane.OK_OPTION;
     }
 
     public boolean RefuseNotice() {
         Form form = new Form(this, "Connection refused");
-        form.addRow("The server refused you application, you have one time to resend application, retry?", new JLabel());
-        form.addButton("OK", JOptionPane.OK_OPTION);
-        form.addButton("Cancel", JOptionPane.CANCEL_OPTION);
-        int result = form.showDialog();
+        form.AddRow("The server refused you application, you have one time to resend application, retry?", new JLabel());
+        form.AddButton("OK", JOptionPane.OK_OPTION);
+        form.AddButton("Cancel", JOptionPane.CANCEL_OPTION);
+        int result = form.ShowDialog();
         if (result == JOptionPane.OK_OPTION) {
             return true;
         }
@@ -198,10 +216,10 @@ public class WhiteboardGUI extends JFrame {
         JMenuItem newFile = new JMenuItem("New");
         newFile.addActionListener(_ -> {
             Form form = new Form(this, "Exit");
-            form.addRow("Save current Whiteboard before creating new one?", new JLabel());
-            form.addButton("OK", JOptionPane.OK_OPTION)
-                    .addButton("Cancel", JOptionPane.CANCEL_OPTION);
-            int result = form.showDialog();
+            form.AddRow("Save current Whiteboard before creating new one?", new JLabel());
+            form.AddButton("OK", JOptionPane.OK_OPTION)
+                    .AddButton("Cancel", JOptionPane.CANCEL_OPTION);
+            int result = form.ShowDialog();
             if (result == JOptionPane.OK_OPTION) {
                 // should check
                 canvas.Saving(null);
@@ -231,10 +249,10 @@ public class WhiteboardGUI extends JFrame {
         JMenuItem close = new JMenuItem("Close");
         close.addActionListener(_ -> {
             Form form = new Form(this, "Close");
-            form.addRow("Save current Whiteboard before quitting?", new JLabel());
-            form.addButton("OK", JOptionPane.OK_OPTION)
-                    .addButton("Cancel", JOptionPane.CANCEL_OPTION);
-            int result = form.showDialog();
+            form.AddRow("Save current Whiteboard before quitting?", new JLabel());
+            form.AddButton("OK", JOptionPane.OK_OPTION)
+                    .AddButton("Cancel", JOptionPane.CANCEL_OPTION);
+            int result = form.ShowDialog();
             if (result == JOptionPane.OK_OPTION) {
                 // should check
                 canvas.Saving(null);
@@ -254,7 +272,7 @@ public class WhiteboardGUI extends JFrame {
         fileMenu. add(new JToolBar.Separator());
         JMenu exportMenu = new JMenu("Export as..");
         JMenuItem PNG = new JMenuItem("PNG");
-        PNG.addActionListener(_ -> exportImage());
+        PNG.addActionListener(_ -> ExportImage());
         exportMenu.add(PNG);
         JMenuItem PDF = new JMenuItem("PDF");
         PDF.addActionListener(_ -> SaveAsPDF());
@@ -322,9 +340,9 @@ public class WhiteboardGUI extends JFrame {
             portField.setEditable(false);
             portField.setBorder(null);
             portField.setOpaque(false);
-            form.addRow("IP address:", ipField);
-            form.addRow("Port:", portField);
-            form.showDialog();
+            form.AddRow("IP address:", ipField);
+            form.AddRow("Port:", portField);
+            form.ShowDialog();
         });
         manageClients.add(ipAndPort);
         JMenuItem manage = new JMenuItem("Manage Online Clients");
@@ -394,8 +412,8 @@ public class WhiteboardGUI extends JFrame {
     }
 
 
-    private void exportImage() {
-        JFileChooser chooser = new JFileChooser(exportPath);
+    private void ExportImage() {
+        JFileChooser chooser = new JFileChooser(EXPORT_PATH);
         chooser.setFileFilter(new FileNameExtensionFilter("png".toUpperCase() + " image", "png"));
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
         File f = chooser.getSelectedFile();
@@ -403,7 +421,7 @@ public class WhiteboardGUI extends JFrame {
             f = new File(f.getParentFile(), f.getName() + "." + "png");
         }
         try {
-            BufferedImage img = snapshotCanvas(canvas);
+            BufferedImage img = SnapshotCanvas(canvas);
             ImageIO.write(img, "png", f);
             JOptionPane.showMessageDialog(this,
                     "Exported to:\n" + f.getAbsolutePath(),
@@ -415,7 +433,7 @@ public class WhiteboardGUI extends JFrame {
         }
     }
 
-    public BufferedImage snapshotCanvas(Canvas canvas) {
+    public BufferedImage SnapshotCanvas(Canvas canvas) {
         int w = canvas.getWidth() + canvas.offsetX;
         int h = canvas.getHeight() + canvas.offsetY;
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
@@ -428,7 +446,7 @@ public class WhiteboardGUI extends JFrame {
 
 
     public void SaveAsPDF() {
-        JFileChooser chooser = new JFileChooser(exportPath);
+        JFileChooser chooser = new JFileChooser(EXPORT_PATH);
         chooser.setFileFilter(new FileNameExtensionFilter("PDF Document", "pdf"));
         if (chooser.showSaveDialog(this) != APPROVE_OPTION) return;
 
@@ -437,7 +455,7 @@ public class WhiteboardGUI extends JFrame {
             out = new File(out.getParentFile(), out.getName() + ".pdf");
         }
 
-        BufferedImage img = snapshotCanvas(canvas);
+        BufferedImage img = SnapshotCanvas(canvas);
         try (PDDocument doc = new PDDocument()) {
             // create a page sized to your canvas
             PDRectangle rect = new PDRectangle(img.getWidth(), img.getHeight());

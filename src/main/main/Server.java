@@ -1,10 +1,9 @@
 package main;
 
-import Whiteboard.RemoteService;
+import Whiteboard.*;
 import Whiteboard.Utility.Log;
 import Whiteboard.Utility.WhiteboardData;
-import Whiteboard.WhiteboardFunctions;
-import Whiteboard.WhiteboardGUI;
+
 import javax.swing.*;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -12,7 +11,6 @@ import java.net.UnknownHostException;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.ExportException;
 
 public class Server  {

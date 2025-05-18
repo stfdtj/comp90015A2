@@ -47,7 +47,7 @@ public class Client {
         Log.info("Client started");
     }
 
-    static void ConfigUIManager() {
+    public static void ConfigUIManager() {
         UIManager.put("MenuBar.background", new Color(255, 182, 185));
         UIManager.put("Menu.background", new Color(255, 182, 185));
         UIManager.put("MenuBar.Foreground", Color.WHITE);

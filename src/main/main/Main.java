@@ -120,11 +120,11 @@ public class Main {
             // dialog window
             Form form = new Form(frame, "Join Someone's Whiteboard");
             JTextField ipField = new JTextField(25);
-            form = form.addRow("Enter Ip address:", ipField);
+            form = form.AddRow("Enter Ip address:", ipField);
             JTextField portField = new JTextField(25);
-            form = form.addRow("Enter Port:", portField);
-            form = form.addButton("OK", JOptionPane.OK_OPTION);
-            int result = form.showDialog();
+            form = form.AddRow("Enter Port:", portField);
+            form = form.AddButton("OK", JOptionPane.OK_OPTION);
+            int result = form.ShowDialog();
             if (result == JOptionPane.OK_OPTION) {
                 ip = ipField.getText();
                 port = portField.getText();
@@ -257,7 +257,7 @@ public class Main {
         return settingsPanel;
     }
 
-    private static void SetButtonStyle(JButton button) {
+    public static void SetButtonStyle(JButton button) {
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setFont(new Font("Nunito", Font.PLAIN, 14));
 
@@ -277,9 +277,9 @@ public class Main {
         // dialog window
         Form form = new Form(frame, "Create New Whiteboard");
         JTextField board = new JTextField(25);
-        form = form.addRow("Enter board name:", board);
-        form = form.addButton("OK", JOptionPane.OK_OPTION);
-        int result = form.showDialog();
+        form = form.AddRow("Enter board name:", board);
+        form = form.AddButton("OK", JOptionPane.OK_OPTION);
+        int result = form.ShowDialog();
         if (result == JOptionPane.OK_OPTION) {
             if (!board.getText().isEmpty()) {
                 boardName = board.getText();

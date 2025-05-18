@@ -52,14 +52,25 @@ public class UpdateListener extends UnicastRemoteObject implements UpdateHandler
         });
     }
 
-
-    // not working?
     @Override
     public void NotifyServerShutDown() throws RemoteException {
         SwingUtilities.invokeLater(() -> {
             JOptionPane.showMessageDialog(whiteboardGUI, "The server has been shut down.");
             System.exit(0);
         });
+    }
+
+    @Override
+    public void receiveRemoving(String id) throws RemoteException {
+        if (canvas == null) {
+            Log.error("Canvas is null in receiveRemoving");
+            return;
+        }
+        try {
+            canvas.ReceiveRemoving(id);
+        } catch (Exception e) {
+            Log.error("Exception inside canvas.ReceiveRemoving: " + e.getMessage());
+        }
     }
 
 }

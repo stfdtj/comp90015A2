@@ -43,7 +43,6 @@ public class WhiteboardData {
     }
 
 
-
     public void SaveData(File path) {
 
         try {
@@ -56,7 +55,7 @@ public class WhiteboardData {
             jsonWriter.key("canvasHeight").value(canvasHeight);
             jsonWriter.key("offSetX").value(offSetX);
             jsonWriter.key("offSetY").value(offSetY);
-            jsonWriter.key("drawings").value(drawingsToJsonArray(drawings));
+            jsonWriter.key("drawings").value(DrawingsToJsonArray(drawings));
 
             jsonWriter.endObject();
 
@@ -154,7 +153,7 @@ public class WhiteboardData {
         return data;
     }
 
-    public static JSONArray drawingsToJsonArray(List<Drawings> drawings) {
+    public static JSONArray DrawingsToJsonArray(List<Drawings> drawings) {
         JSONArray array = new JSONArray();
 
         for (Drawings d : drawings) {
@@ -219,13 +218,6 @@ public class WhiteboardData {
     }
 
 
-
-
-
-
-
-
-
     public void setBoardName(String boardName){
         this.boardName = boardName;
     }
@@ -258,7 +250,6 @@ public class WhiteboardData {
     public List<Drawings> getDrawings() {
         return drawings;
     }
-
 
     public int getOffSetY() {
         return offSetY;
