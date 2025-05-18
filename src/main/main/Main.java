@@ -77,7 +77,7 @@ public class Main {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("Welcome to WhiteBoard", SwingConstants.CENTER);
+        JLabel title = new JLabel("Welcome to Whiteboard", SwingConstants.CENTER);
         title.setFont(new Font("Nunito", Font.BOLD, 18));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
         title.setForeground(Color.WHITE);
